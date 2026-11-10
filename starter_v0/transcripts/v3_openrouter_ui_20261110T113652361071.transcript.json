@@ -1,0 +1,26 @@
+{
+  "transcript_id": "v3_openrouter_ui_20261110T113652361071",
+  "version": "v3",
+  "artifact_version": "v3+p0d5f404ccbc3+t730f5f26960b",
+  "prompt_hash": "0d5f404ccbc382d0d266b3b236dfcbb6b7649ca03424c68e948c0ab59b91e9db",
+  "tools_hash": "730f5f26960b07f4c18ae3c9763d8493b95ff67d3d4649a7bc2a277b6b701a10",
+  "provider": "openrouter",
+  "model": null,
+  "source": "streamlit",
+  "system_prompt": "/home/khuathieu/vinai20k/K5-L3-DAY03-KhuatDuyHieu-2A202603383-ResearchAgentToolEval/starter_v0/artifacts/system_prompt.md",
+  "tools": "/home/khuathieu/vinai20k/K5-L3-DAY03-KhuatDuyHieu-2A202603383-ResearchAgentToolEval/starter_v0/artifacts/tools.yaml",
+  "history_window": 5,
+  "max_tool_rounds": 4,
+  "created_at": "2026-11-10T11:36:52",
+  "updated_at": "2026-11-10T11:37:01",
+  "turns": [
+    {
+      "turn_index": 1,
+      "started_at": "2026-11-10T11:37:00",
+      "user": "tiểu sử donald trump ",
+      "status": "provider_error",
+      "error": "❌ RuntimeError: Missing API key env var: OPENROUTER_API_KEY",
+      "ended_at": "2026-11-10T11:37:01"
+    }
+  ]
+}

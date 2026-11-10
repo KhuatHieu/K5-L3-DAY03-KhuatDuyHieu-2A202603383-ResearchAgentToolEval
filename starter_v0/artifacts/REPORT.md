@@ -6,9 +6,9 @@
 
 ## Team
 
-- Team:
-- Members:
-- Provider/model:
+- Team: KhuatDuyHieu-2A202603383 (Day 03 — Research Agent Tool Eval)
+- Members: Hieu, thdanhnguyen, HViettt, doanlong9304
+- Provider/model: OpenAI `gpt-6-luna` (`reasoning_effort=none` để gọi được function tools)
 
 ---
 
@@ -16,33 +16,44 @@
 
 ## A1. Agent này làm được gì
 
-> 1–2 câu mô tả agent dùng để làm gì (cho team khác hiểu nhanh).
+**Research agent tiếng Việt:** tìm tin tức trên web, theo dõi tweet của một tài khoản hoặc cả cộng đồng Twitter/X, đọc và tóm tắt bài viết từ URL, tra paper arXiv, Wikipedia, Hacker News và GitHub, tính toán số, rồi tổng hợp thành bản tin markdown. Agent **hỏi lại khi thiếu thông tin** (không đoán account hay URL), **xin xác nhận trước khi gửi** Telegram, và từ chối việc ngoài phạm vi research (giải toán, viết code, đặt vé…).
 
-Ví dụ: "Research agent: tìm tin theo từ khóa / theo tài khoản, đọc URL, tổng hợp thành digest, và gửi lên Telegram khi được xác nhận."
+Kết quả eval hiện tại (`v2b`): base **0.80**, routing 0.95; group (10 case nhóm tự viết) **0.80**. Baseline `v0` là 0.65.
 
 **Link dùng thử (deploy):**
 
-> Dán link public để team khác mở thử ngay. Cách deploy nhanh bằng Cloudflare Tunnel xem README. Nếu deploy Vercel/Streamlit Cloud thì dán link đó.
+> UI Streamlit (`streamlit run app.py`) public qua Cloudflare Tunnel.
 >
-> URL: 
+> URL: _(điền link `https://….trycloudflare.com` khi mở tunnel)_
 
 ## A2. Tool agent có
 
-> Liệt kê các tool agent đang dùng (gồm tool mới nhóm tự thêm). Mỗi tool 1 dòng: tên + làm được gì.
+14 tool: 10 tool có sẵn và **4 tool nhóm tự viết**.
 
 | Tên tool | Làm được gì | Tool mới nhóm thêm? |
 |---|---|---|
-| clarify | hỏi lại người dùng khi thiếu thông tin | không |
-|  |  |  |
-|  |  |  |
+| `clarify` | Hỏi lại người dùng khi thiếu thông tin (account, URL…) hoặc xin xác nhận yes/no trước khi gửi, rồi dừng chờ trả lời | không |
+| `timeline` | Lấy tweet gần đây của **một tài khoản** X cụ thể (tự đổi tên người → handle, vd Sam Altman → `sama`) | không |
+| `social_search` | Tìm tweet theo **từ khóa/chủ đề** trên X, sắp xếp `Latest` (mới nhất) hoặc `Top` (nổi bật) | không |
+| `lookup` | Tìm kiếm web và tin tức (Tavily), có `topic=news` và `timeframe` day/week/month/year | không |
+| `fetch` | Đọc nội dung một URL cụ thể thành markdown (Firecrawl) | không |
+| `format` | Trình bày các item đã thu thập thành bản tin markdown (brief, bullets, thread, sections) | không |
+| `send` | Gửi bản tin lên Telegram, **chỉ khi người dùng đã xác nhận** (`confirmed=true`) | không |
+| `policy` | Tra chính sách nội bộ công ty (research, privacy, citation, publishing, tool usage) | không |
+| `papers` | Tìm paper trên arXiv theo chủ đề | không |
+| `paper_text` | Tải PDF arXiv và trích text của một paper đã biết ID/URL | không |
+| `wikipedia` | Tóm tắt kiến thức nền: "X là gì / X là ai" (en/vi) | **có** |
+| `hackernews` | Tìm story và thảo luận trên Hacker News, sắp xếp theo độ liên quan hoặc mới nhất | **có** |
+| `github_repos` | Tìm repository GitHub theo từ khóa, sắp xếp theo số sao hoặc mới cập nhật | **có** |
+| `calculator` | Tính chính xác biểu thức số học (parse bằng AST an toàn, không dùng `eval`) | **có** |
 
 ## A3. Câu hỏi mẫu để thử
 
-> 3–5 câu hỏi/yêu cầu mẫu để team khác tự thử agent ngay.
-
-1.
-2.
-3.
+1. **Tin tức web:** "Tin AI hôm nay có gì nổi bật?" → `lookup` (news, day)
+2. **Tweet của một người:** "3 tweet mới nhất của Andrej Karpathy là gì?" → `timeline(screenname="karpathy", limit=3)`
+3. **Hỏi lại khi thiếu thông tin:** "Tóm tắt bài viết này giúp mình", rồi gửi link ở lượt sau → `clarify` → `fetch`
+4. **Tool mới:** "Mấy bài mới đăng gần đây nhất trên Hacker News về Rust có gì?" → `hackernews(sort="date")`; "Tìm 3 repo GitHub nhiều sao nhất về vector database" → `github_repos`; "Alan Turing là ai?" → `wikipedia`
+5. **Ranh giới an toàn:** "Gửi bản tin AI hôm nay lên Telegram" → agent phải **hỏi xác nhận** trước, không tự gửi. Thử thêm "Viết giúp mình hàm Fibonacci" → agent từ chối vì ngoài phạm vi.
 
 ---
 
