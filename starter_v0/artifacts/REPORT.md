@@ -126,25 +126,19 @@ Use `transcripts/*.transcript.json`.
 
 ## B5. Bonus Evidence
 
-Only fill if your team did bonus.
-
 | Bonus | Evidence File | What Worked | Risk / Guardrail |
 |---|---|---|---|
 | send (Telegram) |  |  |  |
-| arXiv/company policy |  |  |  |
-| UI | `app.py` |Streamlit UI so sánh v0 → v3 (qua Cloudflare Tunnel): tab v0 Baseline & Failure Analysis (7 case FAIL, prompt v0 vs hiện tại), tab Version Evidence (KPI, biểu đồ, `version_log.csv`), tab Live Chat chọn preset v0/v1c/v2b, nút xác nhận trước khi `send`, hiển thị `waiting_for_user`, tải transcript JSON. | Link tunnel công khai và đổi khi restart; hết quota/thiếu API key (đã ghi trong transcript). Guardrail: `send` cần xác nhận, lỗi provider hiển thị rõ, giữ nguyên prompt/tools v0 để so sánh công bằng. ||
+| arXiv / company policy | `../transcripts/v3_openrouter_ui_20261110T112629096222.transcript.json`; `tools.yaml` | `policy` tra cứu được quy tắc nội bộ về cách chọn tool. Công cụ arXiv đã được cấu hình nhưng chưa có lượt gọi trong transcript. | Không xem nội dung policy tĩnh là tin mới; cần chạy một truy vấn arXiv để xác nhận công cụ hoạt động end-to-end. |
+| UI | `../app.py`; `../transcripts/v3_openrouter_ui_20261110T112629096222.transcript.json` | Streamlit cho chọn phiên bản, chat qua tool loop, xem trạng thái hỏi lại và tải transcript; transcript xác nhận chat UI đã chạy với tool. | Tunnel công khai có thể đổi/ngừng khi restart; cần API key/quota hợp lệ. `send` yêu cầu xác nhận trước khi gửi. |
 | Tool unit tests (`tests/`) | `pytest` output |  |  |
 
-Tool unit tests: số test đã viết, số bug tìm được trong tool có sẵn (nếu có), và một ví dụ lỗi mà unit test bắt được nhưng eval không bắt được.
-
 ## B6. Reflection
 
-## B6. Reflection
-
-- **Fixes thuộc `system_prompt.md`:** các quy tắc hành vi. Thiếu account/URL thì gọi `clarify` thay vì đoán; `send` phải hỏi xác nhận (yes/no) trước; câu ngoài phạm vi (ví dụ code Python) thì không gọi tool; cho phép gọi nhiều tool song song khi cần. Đã bỏ các chỉ dẫn xấu của v0 như "pick a well-known account", "assume a likely URL", "just go ahead", "always finish in a single step".
-- **Fixes thuộc `tools.yaml`:** mô tả tool và schema tham số. Mô tả rõ khi nào dùng tool nào (wikipedia cho "X là ai", hackernews cho bài mới, calculator cho phép tính); ràng buộc `query` ngắn gọn; enum cho `sort`, `topic`, `timeframe`; thêm 4 tool mới (wikipedia, hackernews, github_repos, calculator) để route đúng.
-- **Failure cần review thủ công:** trường hợp tool lỗi nhưng câu trả lời nghe vẫn hợp lý. Ví dụ `calculator` trả `NotImplementedError` nhưng model tự tính ra 650 và không báo lỗi; hoặc `social_search` lỗi 403 mà agent phải nói thật là không lấy được. Grader tự động chỉ kiểm tra tool call, không kiểm tra câu trả lời có trung thực, đúng nguồn hay không.
-- **Cải thiện tiếp theo:** implement thật `calculator`; bắt buộc agent báo lỗi tool thay vì tự trả lời; thêm fallback khi API lỗi (403/429); mở rộng eval thêm case chaining và case tool lỗi; thêm kiểm tra câu trả lời có bám theo kết quả tool; dùng provider có quota ổn định để chạy suite đầy đủ.
+- **`system_prompt.md`:** quy định hành vi: hỏi lại khi thiếu thông tin, xin xác nhận trước khi gửi và từ chối yêu cầu ngoài phạm vi.
+- **`tools.yaml`:** quy định cách chọn tool và schema/giá trị tham số để định tuyến, chẳng hạn `wikipedia`, `hackernews` và `calculator`.
+- **Cần review thủ công:** tool lỗi nhưng agent vẫn đưa ra câu trả lời nghe có vẻ đúng (ví dụ calculator lỗi nhưng tự tính tiếp); chấm điểm tool call không đủ để xác nhận câu trả lời trung thực.
+- **Cải thiện tiếp:** hoàn thiện calculator, làm rõ lỗi tool trong câu trả lời và bổ sung eval cho lỗi API/tool cùng chất lượng nội dung.
 
 ## B7. Small Local Model Challenge (bonus)
 
