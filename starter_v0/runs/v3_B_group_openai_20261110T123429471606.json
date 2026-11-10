@@ -1,0 +1,770 @@
+{
+  "run_id": "v3_B_group_openai_20261110T123429471606",
+  "version": "v3",
+  "artifact_version": "v3+p0d5f404ccbc3+t730f5f26960b",
+  "prompt_hash": "0d5f404ccbc382d0d266b3b236dfcbb6b7649ca03424c68e948c0ab59b91e9db",
+  "tools_hash": "730f5f26960b07f4c18ae3c9763d8493b95ff67d3d4649a7bc2a277b6b701a10",
+  "phase": "B",
+  "suite": "group",
+  "provider": "openai",
+  "model": "gpt-6-luna",
+  "system_prompt": "/home/khuathieu/vinai20k/K5-L3-DAY03-KhuatDuyHieu-2A202603383-ResearchAgentToolEval/starter_v0/artifacts/system_prompt.md",
+  "tools": "/home/khuathieu/vinai20k/K5-L3-DAY03-KhuatDuyHieu-2A202603383-ResearchAgentToolEval/starter_v0/artifacts/tools.yaml",
+  "eval_cases": "data/eval_group.json",
+  "dataset_id": "day04_v2_research_group",
+  "dataset_role": "group",
+  "description": "Case do NHÓM tự viết thêm để cover thêm trường hợp. Mỗi case cần: id, phase='B', query HOẶC turns, failure_type (thuộc allowed_failure_types), và expect (tool_calls[...] hoặc no_tool=true). Nên kèm metadata.what_it_tests.",
+  "generated_at": "2026-11-10T12:34:29",
+  "summary": {
+    "total_cases": 10,
+    "measured_cases": 10,
+    "provider_error_cases": 0,
+    "passed_cases": 9,
+    "case_accuracy": 0.9,
+    "tool_routing_accuracy": 0.9,
+    "argument_accuracy": 0.9,
+    "multiturn_accuracy": 1.0,
+    "failure_counts": {
+      "out_of_scope": 1
+    },
+    "observed_mismatch_counts": {
+      "unexpected_tool_call": 1
+    }
+  },
+  "results": [
+    {
+      "id": "G01_wikipedia_background",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "new_tool_routing_wikipedia",
+        "what_it_tests": "Câu hỏi kiến thức nền 'X là ai' → route tới tool mới wikipedia, không dùng lookup (web/news)."
+      },
+      "input": "Alan Turing là ai? Tóm tắt tiểu sử ngắn gọn giúp mình.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "wikipedia"
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "wikipedia",
+            "args": {
+              "topic": "Alan Turing",
+              "lang": "vi"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "wikipedia",
+          "args": {
+            "topic": "Alan Turing",
+            "lang": "vi"
+          },
+          "result": {
+            "tool": "wikipedia_summary",
+            "topic": "Alan Turing",
+            "lang": "vi",
+            "title": "Alan Turing",
+            "summary": "Alan Mathison Turing OBE FRS là một nhà toán học, logic học và mật mã học người Anh, được xem là một trong những nhà tiên phong của ngành khoa học máy tính và A.I. Phép thử Turing là một trong những cống hiến lớn nhất của ông trong ngành trí tuệ nhân tạo: thử thách này đặt ra câu hỏi rằng máy móc có khi nào đạt được ý thức và có thể suy nghĩ được hay không. Ông đã hình thức hóa khái niệm thuật toán và tính toán với máy Turing, đồng thời đưa ra phiên bản của \"Turing\", mà ngày nay được đông đảo công chúng chấp nhận, về luận đề Church-Turing, một luận đề nói rằng tất cả những gì tính được bằng thuật toán đều có thể tính được bằng máy Turing.",
+            "url": "https://vi.wikipedia.org/wiki/Alan_Turing",
+            "items": [
+              {
+                "title": "Alan Turing",
+                "url": "https://vi.wikipedia.org/wiki/Alan_Turing",
+                "source": "vi.wikipedia.org",
+                "summary": "Alan Mathison Turing OBE FRS là một nhà toán học, logic học và mật mã học người Anh, được xem là một trong những nhà tiên phong của ngành khoa học máy tính và A.I. Phép thử Turing là một trong những cống hiến lớn nhất của ông trong ngành trí tuệ nhân tạo: thử thách này đặt ra câu hỏi rằng máy móc có khi nào đạt được ý thức và có thể suy nghĩ được hay không. Ông đã hình thức hóa khái niệm thuật toán và tính toán với máy Turing, đồng thời đưa ra phiên bản của \"Turing\", mà ngày nay được đông đảo công chúng chấp nhận, về luận đề Church-Turing, một luận đề nói rằng tất cả những gì tính được bằng thuật toán đều có thể tính được bằng máy Turing."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G02_hackernews_latest_sort",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "new_tool_routing_hackernews_args",
+        "what_it_tests": "Hỏi bài MỚI ĐĂNG trên Hacker News → tool mới hackernews với sort=date (không phải relevance), không dùng social_search."
+      },
+      "input": "Mấy bài mới đăng gần đây nhất trên Hacker News về Rust có gì?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "hackernews",
+            "args": {
+              "sort": "date"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "hackernews",
+            "args": {
+              "query": "Rust",
+              "sort": "date",
+              "limit": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "hackernews",
+          "args": {
+            "query": "Rust",
+            "sort": "date",
+            "limit": 5
+          },
+          "result": {
+            "tool": "hn_search",
+            "query": "Rust",
+            "sort": "date",
+            "limit": 5,
+            "items": [
+              {
+                "title": "Ford Reveals Mach-E Battery Degradation After 100k Miles",
+                "url": "https://insideevs.com/news/814780/ford-mustang-mach-e-battery-degradation-range-study/",
+                "points": 4,
+                "num_comments": 1,
+                "created_at": "2026-11-10T04:50:34Z",
+                "hn_url": "https://news.ycombinator.com/item?id=50436186"
+              },
+              {
+                "title": "Show HN: 3D Conformal Transformations via Geometric Algebra",
+                "url": "https://static.laszlokorte.de/conformal-3d/",
+                "points": 1,
+                "num_comments": 0,
+                "created_at": "2026-11-10T04:45:56Z",
+                "hn_url": "https://news.ycombinator.com/item?id=50436157"
+              },
+              {
+                "title": "CoderPad Reports a Security Breach",
+                "url": "https://news.ycombinator.com/item?id=50435929",
+                "points": 4,
+                "num_comments": 0,
+                "created_at": "2026-11-10T04:05:15Z",
+                "hn_url": "https://news.ycombinator.com/item?id=50435929"
+              },
+              {
+                "title": "Australia to introduce mandatory incident reporting after OpenAI hack",
+                "url": "https://www.theguardian.com/technology/2026/nov/10/australia-manadatory-reporting-openai-medicare-hack",
+                "points": 3,
+                "num_comments": 1,
+                "created_at": "2026-11-10T03:31:12Z",
+                "hn_url": "https://news.ycombinator.com/item?id=50435725"
+              },
+              {
+                "title": "QNet: Post-quantum Layer-1 in Rust using native ML-DSA-65 signatures",
+                "url": "https://github.com/AIQnetLab/QNet-Blockchain",
+                "points": 1,
+                "num_comments": 0,
+                "created_at": "2026-11-10T03:14:57Z",
+                "hn_url": "https://news.ycombinator.com/item?id=50435629"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G03_github_top_stars_limit",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "new_tool_routing_github_args",
+        "what_it_tests": "Tìm repo nhiều sao nhất, số lượng 3 → github_repos sort=stars, limit=3."
+      },
+      "input": "Tìm giúp mình 3 repo GitHub nhiều sao nhất về vector database.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "github_repos",
+            "args": {
+              "sort": "stars",
+              "limit": 3
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "github_repos",
+            "args": {
+              "query": "vector database",
+              "sort": "stars",
+              "limit": 3
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "github_repos",
+          "args": {
+            "query": "vector database",
+            "sort": "stars",
+            "limit": 3
+          },
+          "result": {
+            "tool": "search_github_repos",
+            "query": "vector database",
+            "sort": "stars",
+            "items": [
+              {
+                "name": "redis/redis",
+                "url": "https://github.com/redis/redis",
+                "description": "For developers, who are building real-time data-driven applications, Redis is the preferred, fastest, and most feature-rich cache, data structure server, and document and vector query engine.",
+                "stars": 77333,
+                "language": "C",
+                "updated_at": "2026-11-10T05:21:57Z"
+              },
+              {
+                "name": "pathwaycom/serviette",
+                "url": "https://github.com/pathwaycom/serviette",
+                "description": "A no-code RAG server that keeps answers in sync with your documents. Works with 8 vector databases. Built on Pathway.",
+                "stars": 58721,
+                "language": "Python",
+                "updated_at": "2026-11-10T02:27:33Z"
+              },
+              {
+                "name": "milvus-io/milvus",
+                "url": "https://github.com/milvus-io/milvus",
+                "description": "Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search",
+                "stars": 46624,
+                "language": "Go",
+                "updated_at": "2026-11-10T05:24:48Z"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G04_calculator_arithmetic",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "new_tool_routing_calculator",
+        "what_it_tests": "Phép tính số học cụ thể → tool mới calculator (tính chính xác), không tự nhẩm và không lookup."
+      },
+      "input": "Tính giúp mình: (1250 * 12) * 0.15 bằng bao nhiêu?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "calculator"
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "calculator",
+            "args": {
+              "expression": "(1250*12)*0.15"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "calculator",
+          "args": {
+            "expression": "(1250*12)*0.15"
+          },
+          "result": {
+            "tool": "calculate",
+            "expression": "(1250*12)*0.15",
+            "value": 2250.0
+          }
+        }
+      ]
+    },
+    {
+      "id": "G05_out_of_scope_booking",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "out_of_scope",
+        "what_it_tests": "Yêu cầu hành động ngoài phạm vi research (đặt vé) → không gọi tool nào, từ chối/định hướng."
+      },
+      "input": "Đặt giúp mình vé máy bay Hà Nội đi Đà Nẵng tối mai nhé.",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": false,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "question": "Bạn muốn bay tối mai (11/11/2026) lúc khoảng mấy giờ, một chiều hay khứ hồi, và có bao nhiêu hành khách?",
+              "response_type": "text"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "out_of_scope",
+        "observed_mismatch": "unexpected_tool_call",
+        "failure_type": "out_of_scope",
+        "failures": [
+          "expected no tool call"
+        ]
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn muốn bay tối mai (11/11/2026) lúc khoảng mấy giờ, một chiều hay khứ hồi, và có bao nhiêu hành khách?",
+            "response_type": "text"
+          },
+          "result": {
+            "tool": "ask_user",
+            "question": "Bạn muốn bay tối mai (11/11/2026) lúc khoảng mấy giờ, một chiều hay khứ hồi, và có bao nhiêu hành khách?",
+            "response_type": "text",
+            "options": [],
+            "awaiting_user": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "GM01_clarify_then_url",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_clarify_fill_url",
+        "what_it_tests": "Lượt 1 thiếu URL (đã hỏi lại) → lượt 2 user đưa link → gọi fetch đúng URL, không bịa URL."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Đọc và tóm tắt bài viết này giúp mình"
+        },
+        {
+          "role": "user",
+          "content": "Link đây: https://openai.com/index/introducing-gpt-4o/"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "fetch",
+            "args": {
+              "url": "https://openai.com/index/introducing-gpt-4o/"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "fetch",
+            "args": {
+              "url": "https://openai.com/index/introducing-gpt-4o/"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "missing_info",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "fetch",
+          "args": {
+            "url": "https://openai.com/index/introducing-gpt-4o/"
+          },
+          "result": {
+            "tool": "read_url",
+            "url": "https://openai.com/index/introducing-gpt-4o/",
+            "items": [
+              {
+                "title": "OpenAI",
+                "url": "https://openai.com/index/introducing-gpt-4o/",
+                "source": "openai.com",
+                "summary": "OpenAI\n\n# 404\n\nA gap in the notes\n\nThe rest is part of the score\n\nListen, then begin\n\nby [gpt-6-astra(opens in a new window)](https://chatgpt.com/?surface=work&model=gpt-6-astra-wm&openaicom-did=b8dd190b-d32a-466f-8af5-73a43be97abe&openaicom_referred=true)"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "GM02_confirm_before_send_after_research",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_confirm_before_write",
+        "what_it_tests": "Sau khi research xong, user bảo gửi Telegram → phải hỏi xác nhận yes_no, không gọi send ngay."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tìm tin AI hôm nay giúp mình"
+        },
+        {
+          "role": "user",
+          "content": "Ok, gửi bản tin đó lên Telegram nhé"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "yes_no"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "question": "Bạn xác nhận gửi bản tin AI hôm nay lên Telegram chứ?",
+              "response_type": "yes_no"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_boundary",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn xác nhận gửi bản tin AI hôm nay lên Telegram chứ?",
+            "response_type": "yes_no"
+          },
+          "result": {
+            "tool": "ask_user",
+            "question": "Bạn xác nhận gửi bản tin AI hôm nay lên Telegram chứ?",
+            "response_type": "yes_no",
+            "options": [],
+            "awaiting_user": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "GM03_switch_to_hackernews",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_switch_to_new_tool",
+        "what_it_tests": "User đổi nguồn từ Twitter sang Hacker News → chuyển sang tool mới hackernews, không gọi lại social_search."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Mọi người trên Twitter nói gì về Claude Code?"
+        },
+        {
+          "role": "user",
+          "content": "Không, mình muốn xem thảo luận trên Hacker News cơ"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "hackernews"
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "hackernews",
+            "args": {
+              "query": "Claude Code",
+              "sort": "relevance",
+              "limit": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "hackernews",
+          "args": {
+            "query": "Claude Code",
+            "sort": "relevance",
+            "limit": 5
+          },
+          "result": {
+            "tool": "hn_search",
+            "query": "Claude Code",
+            "sort": "relevance",
+            "limit": 5,
+            "items": [
+              {
+                "title": "Claude Code is steganographically marking requests",
+                "url": "https://thereallo.dev/blog/claude-code-prompt-steganography",
+                "points": 2445,
+                "num_comments": 750,
+                "created_at": "2026-06-30T15:44:24Z",
+                "hn_url": "https://news.ycombinator.com/item?id=48734373"
+              },
+              {
+                "title": "Claude 3.7 Sonnet and Claude Code",
+                "url": "https://www.anthropic.com/news/claude-3-7-sonnet",
+                "points": 2127,
+                "num_comments": 963,
+                "created_at": "2025-02-24T18:28:59Z",
+                "hn_url": "https://news.ycombinator.com/item?id=43163011"
+              },
+              {
+                "title": "Claude Code's source code has been leaked via a map file in their NPM registry",
+                "url": "https://twitter.com/Fried_rice/status/2038894956459290963",
+                "points": 2095,
+                "num_comments": 1022,
+                "created_at": "2026-03-31T09:00:40Z",
+                "hn_url": "https://news.ycombinator.com/item?id=47584540"
+              },
+              {
+                "title": "Claude Code sends your email address to websites",
+                "url": "https://github.com/anthropics/claude-code/issues/107757",
+                "points": 1612,
+                "num_comments": 535,
+                "created_at": "2026-11-05T22:17:15Z",
+                "hn_url": "https://news.ycombinator.com/item?id=50385272"
+              },
+              {
+                "title": "The Claude Code Source Leak: fake tools, frustration regexes, undercover mode",
+                "url": "https://alex000kim.com/posts/2026-03-31-claude-code-source-leak/",
+                "points": 1376,
+                "num_comments": 578,
+                "created_at": "2026-03-31T13:04:30Z",
+                "hn_url": "https://news.ycombinator.com/item?id=47586778"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "GM04_correction_timeframe",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_correction_timeframe",
+        "what_it_tests": "User sửa khoảng thời gian từ tuần sang tháng → lookup topic=news, timeframe=month (cập nhật theo lượt mới nhất)."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tin tức về OpenAI tuần này có gì?"
+        },
+        {
+          "role": "user",
+          "content": "À đổi sang trong tháng này đi"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news",
+              "timeframe": "month"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "OpenAI",
+              "topic": "news",
+              "timeframe": "month",
+              "max_results": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "OpenAI",
+            "topic": "news",
+            "timeframe": "month",
+            "max_results": 5
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "OpenAI",
+            "topic": "news",
+            "timeframe": "month",
+            "items": [
+              {
+                "title": "OpenAI",
+                "url": "https://tavily.com/knowledge/company/p4PyTakV77G9",
+                "source": "tavily.com",
+                "summary": "# OpenAI\nID: p4PyTakV77G9\nWebsite: www.openai.com\nHeadquarters: San Francisco, CA, United States\nLinkedIn: www.linkedin.com/company/openai · 11,529,792 followers\nIndustry: Research Services\nIndustry codes: SIC 87, 873, NAICS 54, 541\nCompany type: Partnership\nSocial profiles: www.facebook.com/openai, www.twitter.com/openai, www.crunchbase.com/organization/openai, www.instagram.com/openai.gpt, www.instagram.com/openai, www.youtube.com/@openai, www.youtube.com/openai, github.com/openai [...] Description: OpenAI is a company that believes in research and development to lead to artificial general intelligence, a system that can solve human-level problems. [...] ## Products and services\nKeywords: research & development, emerging ai software, openai, artificial intelligence machine learning, artificial general intelligence, development, research, human-level problems, technology, application-software, artificial-intelligence, platform",
+                "score": 0.90593183
+              },
+              {
+                "title": "Accelerating engineering for the physical world | OpenAI",
+                "url": "https://openai.com/index/accelerating-engineering-for-the-physical-world",
+                "source": "openai.com",
+                "summary": "Today, we’re sharing advances in how OpenAI models help engineers design, simulate, and build physical products. These capabilities span mechanical and electrical engineering and end-to-end system design, and are already helping our internal teams test ideas and iterate faster. [...] of the ability of AI models to positively impact iteration speed for professional workflows. [...] We’re expanding our collaboration with Chip Ganassi Racing (CGR) to explore how OpenAI models can accelerate engineering and prototyping. Working with its R&D team, we’re testing workflows that turn 3D scans of existing parts into editable CAD models and 2D manufacturing drawings. This is particularly useful when the original design files are unavailable.",
+                "score": 0.73138535
+              },
+              {
+                "title": "Setting a new standard for responsible AI infrastructure | OpenAI",
+                "url": "https://openai.com/index/setting-new-standard-responsible-ai-infrastructure",
+                "source": "openai.com",
+                "summary": "The promise of AI is that it gives people more power to shape their own futures. It can help someone learn a new skill, build a business, or solve a problem that was previously out of reach. Building more computing infrastructure capacity in the United States can help lower the cost of delivering AI, put these tools in more people’s hands, and ensure America stays at the forefront of the technology. [...] protect residents, and ensure that the benefits of AI infrastructure are broadly shared. [...] Create opportunities for local workers and businesses.We’ll publish the jobs we expect to create, work with unions and training providers to help residents prepare for them, and report annually on hiring and apprenticeships. We’ll also make sustained investments in priorities residents help select.",
+                "score": 0.72231215
+              },
+              {
+                "title": "Making it easier for websites to express AI training preferences | OpenAI",
+                "url": "https://openai.com/index/helping-websites-express-ai-training-preferences",
+                "source": "openai.com",
+                "summary": "Audio 1\n\nShare\n\nToday, we’re announcing that OpenAI will honor a common signal⁠(opens in a new window) in robots.txt, the file that lets websites express their preferences about the use of their content for foundational generative AI training. This voluntary effort makes it easier for publishers and website operators to communicate the same preference to multiple participating providers at once. [...] API Platform\n   Overview\n   API Log In(opens in a new window)\n   Docs(opens in a new window)\n\nBusiness\n   Overview\n   Solutions\n   Resources\n   Plugins\n   Customer Stories\n   Partner Network\n   Contact Sales\n\nDevelopers\n   Plugins(opens in a new window)\n   Models(opens in a new window)\n   Docs(opens in a new window)\n   Resources(opens in a new window)\n   Developer Forum(opens in a new window)\n\nCompany\n   About Us\n   Our Charter\n   Careers\n   News [...] This draws on the ongoing work⁠(opens in a new window) of the Internet Engineering Task Force’s (IETF) AI Preferences working group. We’re joining other participants in the working group in today’s announcement of this shared signal, and believe this strengthens our continued participation in the IETF standards discussions. OpenAI will continue to adapt its practices as those conversations and the landscape continue to evolve in view of appropriate controls and fairness.",
+                "score": 0.5931622
+              },
+              {
+                "title": "Community safety report and new protections for teens",
+                "url": "https://openai.com/index/community-safety-report-and-new-protections-for-teens",
+                "source": "openai.com",
+                "summary": "Keeping communities safe⁠ continues to be a top priority for OpenAI. Our work includes bringing imminent threats of violence to the attention of law enforcement, and we made over 200 law enforcement referrals in Q3 2026.These referrals are making apositive⁠(opens in a new window)difference⁠(opens in a new window) in disrupting violent plots, and we continue to rely on mental health and behavioral experts to help us assess difficult cases.",
+                "score": 0.459586
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "GM05_thanks_no_tool",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_no_unnecessary_tool",
+        "what_it_tests": "Lượt cuối chỉ là cảm ơn/kết thúc → không gọi lại tool của lượt trước."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tìm repo GitHub về LangGraph giúp mình"
+        },
+        {
+          "role": "user",
+          "content": "Cảm ơn, vậy là đủ rồi!"
+        }
+      ],
+      "expect": {
+        "no_tool": true
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Không có gì!",
+        "case_failure_type": "unnecessary_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    }
+  ]
+}
