@@ -15,7 +15,7 @@ class OpenAIProvider:
         *,
         api_key_env: str = "OPENAI_API_KEY",
         base_url: str | None = None,
-        default_model: str = "gpt-4o-mini",
+        default_model: str = "gpt-6-luna",
         api_key_default: str | None = None,
     ) -> None:
         self.api_key_env = api_key_env
@@ -47,6 +47,13 @@ class OpenAIProvider:
             "messages": messages,
             "temperature": temperature,
         }
+        # Newer reasoning models (gpt-5*/gpt-6*/o*) reject function tools on Chat Completions
+        # unless reasoning is off. Override with OPENAI_REASONING_EFFORT (empty = don't send).
+        effort = os.getenv("OPENAI_REASONING_EFFORT")
+        if effort is None and kwargs["model"].startswith(("gpt-5", "gpt-6", "o")):
+            effort = "none"
+        if effort:
+            kwargs["reasoning_effort"] = effort
         if tools:
             kwargs["tools"] = tools
         if tool_choice is not None:
