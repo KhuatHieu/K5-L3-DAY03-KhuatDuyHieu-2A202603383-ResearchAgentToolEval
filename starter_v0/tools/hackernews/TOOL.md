@@ -12,29 +12,40 @@ side_effect: false
 
 Tìm story và thảo luận cộng đồng dev/tech/startup trên Hacker News (Y Combinator) theo từ khóa.
 
-Owner: thdanhnguyen
 
-## Khi xong — dán khối này vào CUỐI `artifacts/tools.yaml`
+## D4 — Câu hỏi mẫu & Eval Cases (gửi doanlong9304 cho `data/eval_group.json` và `REPORT.md` Phần A3)
 
-```yaml
-  - name: hackernews
-    description: "Tìm các bài đăng (stories) và thảo luận của cộng đồng lập trình viên/kỹ sư/startup trên Hacker News (Y Combinator) theo từ khóa. Dùng khi user hỏi về thảo luận trên Hacker News (HN), góc nhìn cộng đồng dev/engineer về một công nghệ, ngôn ngữ lập trình, công cụ AI, hoặc tin tức nổi bật trên HN. KHÔNG dùng cho bài đăng Twitter/X (dùng social_search/timeline), tin tức báo chí phổ thông (dùng lookup), hoặc tìm mã nguồn/repository trên GitHub (dùng github_repos)."
-    parameters:
-      type: object
-      properties:
-        query: {type: string, description: "Từ khóa tìm kiếm trên Hacker News (ví dụ: 'Claude Code', 'Rust vs Go', 'SQLite')."}
-        sort: {type: string, enum: [relevance, date], default: "relevance", description: "Cách sắp xếp: 'relevance' cho bài nổi bật/liên quan nhất, 'date' cho bài mới đăng gần đây nhất."}
-        limit: {type: integer, default: 5, description: "Số lượng story tối đa cần lấy (mặc định 5)."}
-      required: [query]
+### Câu hỏi mẫu cho REPORT Phần A3
+1. *"Cộng đồng trên Hacker News đang thảo luận gì về Claude Code?"* → route tới `hackernews(query="Claude Code")`
+2. *"Tìm 5 bài đăng mới nhất trên Hacker News về ngôn ngữ lập trình Rust."* → route tới `hackernews(query="Rust", sort="date", limit=5)`
+3. *"Các bài viết nổi bật nhất trên HN bàn về SQLite trong production là gì?"* → route tới `hackernews(query="SQLite", sort="relevance")`
+
+### JSON snippet mẫu cho `data/eval_group.json`
+```json
+{
+  "id": "G_hn_single_search",
+  "phase": "B",
+  "suite": "group",
+  "query": "Tìm 5 bài thảo luận mới nhất trên Hacker News về ngôn ngữ Rust.",
+  "failure_type": "wrong_tool",
+  "expect": {
+    "tool_calls": [
+      {
+        "name": "hackernews",
+        "args": {
+          "query": "Rust",
+          "sort": "date",
+          "limit": 5
+        }
+      }
+    ]
+  },
+  "metadata": {
+    "skill": "routing_hackernews_search",
+    "difficulty": "medium",
+    "what_it_tests": "Tìm thảo luận trên Hacker News mới nhất với số lượng 5 -> gọi hackernews(query='Rust', sort='date', limit=5)."
+  }
+}
 ```
-
-## Câu hỏi mẫu (routing tới `hackernews` — gửi doanlong9304 cho D4 / eval_group.json / REPORT A3)
-
-1. `"Cộng đồng trên Hacker News đang thảo luận gì về Claude Code?"`
-   - Expected call: `hackernews(query="Claude Code")`
-2. `"Tìm 5 bài đăng mới nhất trên Hacker News về ngôn ngữ lập trình Rust."`
-   - Expected call: `hackernews(query="Rust", sort="date", limit=5)`
-3. `"Các bài viết nổi bật nhất trên HN bàn về SQLite trong production là gì?"`
-   - Expected call: `hackernews(query="SQLite", sort="relevance")`
 
 Sau đó chạy: `pytest tests/test_tool_contract.py tests/test_tool_hackernews.py`

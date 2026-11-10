@@ -27,13 +27,38 @@ Owner: thdanhnguyen
       required: [topic]
 ```
 
-## Câu hỏi mẫu (routing tới `wikipedia` — gửi doanlong9304 cho D4 / eval_group.json / REPORT A3)
+## D4 — Câu hỏi mẫu & Eval Cases (gửi doanlong9304 cho `data/eval_group.json` và `REPORT.md` Phần A3)
 
-1. `"Kiến trúc Transformer trong học sâu là gì? Cho mình tóm tắt định nghĩa từ Wikipedia tiếng Anh."`
-   - Expected call: `wikipedia(topic="Transformer", lang="en")`
-2. `"Alan Turing là ai? Tra cứu tiểu sử tóm tắt trên Wikipedia giúp mình."`
-   - Expected call: `wikipedia(topic="Alan Turing")`
-3. `"Giải thích khái niệm Retrieval-Augmented Generation (RAG) theo Wikipedia."`
-   - Expected call: `wikipedia(topic="Retrieval-augmented generation", lang="en")`
+### Câu hỏi mẫu cho REPORT Phần A3
+1. *"Kiến trúc Transformer trong deep learning là gì? Tóm tắt định nghĩa từ Wikipedia giúp mình."* → route tới `wikipedia(topic="Transformer (deep learning architecture)", lang="en")`
+2. *"Alan Turing là ai? Cho mình thông tin tiểu sử tóm tắt trên Wikipedia."* → route tới `wikipedia(topic="Alan Turing")`
+3. *"Giải thích khái niệm Retrieval-Augmented Generation (RAG) theo Wikipedia tiếng Anh."* → route tới `wikipedia(topic="Retrieval-augmented generation", lang="en")`
+
+### JSON snippet mẫu cho `data/eval_group.json`
+```json
+{
+  "id": "G_wiki_single_definition",
+  "phase": "B",
+  "suite": "group",
+  "query": "Alan Turing là ai? Tra cứu tóm tắt tiểu sử trên Wikipedia tiếng Anh giúp mình.",
+  "failure_type": "wrong_tool",
+  "expect": {
+    "tool_calls": [
+      {
+        "name": "wikipedia",
+        "args": {
+          "topic": "Alan Turing",
+          "lang": "en"
+        }
+      }
+    ]
+  },
+  "metadata": {
+    "skill": "routing_wikipedia_summary",
+    "difficulty": "easy",
+    "what_it_tests": "Hỏi tiểu sử/khái niệm bách khoa trên Wikipedia -> gọi tool wikipedia thay vì lookup."
+  }
+}
+```
 
 Sau đó chạy: `pytest tests/test_tool_contract.py tests/test_tool_wikipedia.py`
