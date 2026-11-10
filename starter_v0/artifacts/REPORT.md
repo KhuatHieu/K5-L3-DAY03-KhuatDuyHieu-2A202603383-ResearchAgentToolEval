@@ -16,8 +16,6 @@
 
 ## A1. Agent này làm được gì
 
-## A1. Agent này làm được gì
-
 **Research agent tiếng Việt:** tìm tin tức trên web, theo dõi tweet của một tài khoản hoặc cả cộng đồng Twitter/X, đọc và tóm tắt bài viết từ URL, tra paper arXiv, Wikipedia, Hacker News và GitHub, tính toán số, rồi tổng hợp thành bản tin markdown. Agent **hỏi lại khi thiếu thông tin** (không đoán account hay URL), **xin xác nhận trước khi gửi** Telegram, và từ chối việc ngoài phạm vi research (giải toán, viết code, đặt vé…).
 
 Kết quả eval hiện tại (`v2b`): base **0.80**, routing 0.95; group (10 case nhóm tự viết) **0.80**. Baseline `v0` là 0.65.
