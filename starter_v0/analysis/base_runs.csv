@@ -19,3 +19,63 @@ v0_B_base_openai_20261110T095815539037,v0,v0+pf0c107a9d7a1+t8db0ba629f52,base,M0
 v0_B_base_openai_20261110T095815539037,v0,v0+pf0c107a9d7a1+t8db0ba629f52,base,M04_clarify_then_url,True,missing_info,,fetch,fetch,True,True,True,
 v0_B_base_openai_20261110T095815539037,v0,v0+pf0c107a9d7a1+t8db0ba629f52,base,M05_correction_limit,True,wrong_arg_value,,timeline,timeline,True,True,True,
 v0_B_base_openai_20261110T095815539037,v0,v0+pf0c107a9d7a1+t8db0ba629f52,base,M06_switch_tool,True,wrong_tool,,lookup,lookup,True,True,True,
+v1_B_base_openai_20261110T101417806341,v1,v1+p9c128d006596+t8db0ba629f52,base,R01_user_tweets_routing,False,wrong_tool,missing_tool_call,timeline,social_search,False,False,False,missing tool call timeline; extra tool call social_search
+v1_B_base_openai_20261110T101417806341,v1,v1+p9c128d006596+t8db0ba629f52,base,R02_search_tweets_routing,False,wrong_tool,,social_search,social_search,True,True,True,
+v1_B_base_openai_20261110T101417806341,v1,v1+p9c128d006596+t8db0ba629f52,base,R03_web_news_routing,False,wrong_tool,wrong_arg_value,lookup,lookup,False,True,False,"query: expected 'AI', got 'tin tức trí tuệ nhân tạo AI hôm nay'"
+v1_B_base_openai_20261110T101417806341,v1,v1+p9c128d006596+t8db0ba629f52,base,R04_read_url_routing,False,wrong_tool,,fetch,fetch,True,True,True,
+v1_B_base_openai_20261110T101417806341,v1,v1+p9c128d006596+t8db0ba629f52,base,R05_limit_arg,False,wrong_arg_value,,timeline,timeline,True,True,True,
+v1_B_base_openai_20261110T101417806341,v1,v1+p9c128d006596+t8db0ba629f52,base,R06_timeframe_arg,False,wrong_arg_value,,lookup,lookup,True,True,True,
+v1_B_base_openai_20261110T101417806341,v1,v1+p9c128d006596+t8db0ba629f52,base,R07_search_type_arg,False,wrong_arg_value,,social_search,social_search,True,True,True,
+v1_B_base_openai_20261110T101417806341,v1,v1+p9c128d006596+t8db0ba629f52,base,R08_out_of_scope,False,out_of_scope,unexpected_tool_call,no_tool,lookup,False,False,False,expected no tool call
+v1_B_base_openai_20261110T101417806341,v1,v1+p9c128d006596+t8db0ba629f52,base,R09_no_tool_capability,False,unnecessary_tool,,no_tool,,True,True,True,
+v1_B_base_openai_20261110T101417806341,v1,v1+p9c128d006596+t8db0ba629f52,base,R10_missing_handle,False,missing_info,,clarify,clarify,True,True,True,
+v1_B_base_openai_20261110T101417806341,v1,v1+p9c128d006596+t8db0ba629f52,base,R11_missing_url,False,missing_info,,clarify,clarify,True,True,True,
+v1_B_base_openai_20261110T101417806341,v1,v1+p9c128d006596+t8db0ba629f52,base,R12_confirm_before_send,False,wrong_boundary,wrong_arg_value,clarify,clarify,False,True,False,"response_type: expected 'yes_no', got 'text'"
+v1_B_base_openai_20261110T101417806341,v1,v1+p9c128d006596+t8db0ba629f52,base,R13_parallel_web_and_tweets,False,wrong_tool,wrong_arg_value,lookup|social_search,lookup|social_search,False,True,False,"query: expected 'AI', got 'tin tức trí tuệ nhân tạo AI hôm nay'; query: expected 'AI', got 'AI artificial intelligence'"
+v1_B_base_openai_20261110T101417806341,v1,v1+p9c128d006596+t8db0ba629f52,base,R14_out_of_scope_coding,False,out_of_scope,unexpected_tool_call,no_tool,format,False,False,False,expected no tool call
+v1_B_base_openai_20261110T101417806341,v1,v1+p9c128d006596+t8db0ba629f52,base,M01_clarify_then_fill,True,missing_info,wrong_arg_value,timeline,timeline,False,True,False,"screenname: expected 'elonmusk', got 'Elon Musk'"
+v1_B_base_openai_20261110T101417806341,v1,v1+p9c128d006596+t8db0ba629f52,base,M02_carryover_timeframe,True,wrong_arg_value,wrong_arg_value,lookup,lookup,False,True,False,"query: expected 'robotics', got 'robotics news today'"
+v1_B_base_openai_20261110T101417806341,v1,v1+p9c128d006596+t8db0ba629f52,base,M03_correction_handle,True,wrong_arg_value,wrong_arg_value,timeline,timeline,False,True,False,"screenname: expected 'karpathy', got 'Andrej Karpathy'"
+v1_B_base_openai_20261110T101417806341,v1,v1+p9c128d006596+t8db0ba629f52,base,M04_clarify_then_url,True,missing_info,,fetch,fetch,True,True,True,
+v1_B_base_openai_20261110T101417806341,v1,v1+p9c128d006596+t8db0ba629f52,base,M05_correction_limit,True,wrong_arg_value,,timeline,timeline,True,True,True,
+v1_B_base_openai_20261110T101417806341,v1,v1+p9c128d006596+t8db0ba629f52,base,M06_switch_tool,True,wrong_tool,,lookup,lookup,True,True,True,
+v1b_B_base_openai_20261110T101547908400,v1b,v1b+pb5aaf666fa7e+t8db0ba629f52,base,R01_user_tweets_routing,False,wrong_tool,,timeline,timeline,True,True,True,
+v1b_B_base_openai_20261110T101547908400,v1b,v1b+pb5aaf666fa7e+t8db0ba629f52,base,R02_search_tweets_routing,False,wrong_tool,,social_search,social_search,True,True,True,
+v1b_B_base_openai_20261110T101547908400,v1b,v1b+pb5aaf666fa7e+t8db0ba629f52,base,R03_web_news_routing,False,wrong_tool,wrong_arg_value,lookup,lookup,False,True,False,"query: expected 'AI', got 'tin tức trí tuệ nhân tạo AI hôm nay'"
+v1b_B_base_openai_20261110T101547908400,v1b,v1b+pb5aaf666fa7e+t8db0ba629f52,base,R04_read_url_routing,False,wrong_tool,,fetch,fetch,True,True,True,
+v1b_B_base_openai_20261110T101547908400,v1b,v1b+pb5aaf666fa7e+t8db0ba629f52,base,R05_limit_arg,False,wrong_arg_value,,timeline,timeline,True,True,True,
+v1b_B_base_openai_20261110T101547908400,v1b,v1b+pb5aaf666fa7e+t8db0ba629f52,base,R06_timeframe_arg,False,wrong_arg_value,,lookup,lookup,True,True,True,
+v1b_B_base_openai_20261110T101547908400,v1b,v1b+pb5aaf666fa7e+t8db0ba629f52,base,R07_search_type_arg,False,wrong_arg_value,,social_search,social_search,True,True,True,
+v1b_B_base_openai_20261110T101547908400,v1b,v1b+pb5aaf666fa7e+t8db0ba629f52,base,R08_out_of_scope,False,out_of_scope,unexpected_tool_call,no_tool,format,False,False,False,expected no tool call
+v1b_B_base_openai_20261110T101547908400,v1b,v1b+pb5aaf666fa7e+t8db0ba629f52,base,R09_no_tool_capability,False,unnecessary_tool,,no_tool,,True,True,True,
+v1b_B_base_openai_20261110T101547908400,v1b,v1b+pb5aaf666fa7e+t8db0ba629f52,base,R10_missing_handle,False,missing_info,,clarify,clarify,True,True,True,
+v1b_B_base_openai_20261110T101547908400,v1b,v1b+pb5aaf666fa7e+t8db0ba629f52,base,R11_missing_url,False,missing_info,,clarify,clarify,True,True,True,
+v1b_B_base_openai_20261110T101547908400,v1b,v1b+pb5aaf666fa7e+t8db0ba629f52,base,R12_confirm_before_send,False,wrong_boundary,wrong_arg_value,clarify,clarify,False,True,False,"response_type: expected 'yes_no', got 'text'"
+v1b_B_base_openai_20261110T101547908400,v1b,v1b+pb5aaf666fa7e+t8db0ba629f52,base,R13_parallel_web_and_tweets,False,wrong_tool,wrong_arg_value,lookup|social_search,lookup|social_search,False,True,False,"query: expected 'AI', got 'tin tức trí tuệ nhân tạo AI hôm nay'; query: expected 'AI', got 'AI OR artificial intelligence'"
+v1b_B_base_openai_20261110T101547908400,v1b,v1b+pb5aaf666fa7e+t8db0ba629f52,base,R14_out_of_scope_coding,False,out_of_scope,unexpected_tool_call,no_tool,format,False,False,False,expected no tool call
+v1b_B_base_openai_20261110T101547908400,v1b,v1b+pb5aaf666fa7e+t8db0ba629f52,base,M01_clarify_then_fill,True,missing_info,,timeline,timeline,True,True,True,
+v1b_B_base_openai_20261110T101547908400,v1b,v1b+pb5aaf666fa7e+t8db0ba629f52,base,M02_carryover_timeframe,True,wrong_arg_value,wrong_arg_value,lookup,lookup,False,True,False,"query: expected 'robotics', got 'robotics news today November 10 2026'"
+v1b_B_base_openai_20261110T101547908400,v1b,v1b+pb5aaf666fa7e+t8db0ba629f52,base,M03_correction_handle,True,wrong_arg_value,,timeline,timeline,True,True,True,
+v1b_B_base_openai_20261110T101547908400,v1b,v1b+pb5aaf666fa7e+t8db0ba629f52,base,M04_clarify_then_url,True,missing_info,,fetch,fetch,True,True,True,
+v1b_B_base_openai_20261110T101547908400,v1b,v1b+pb5aaf666fa7e+t8db0ba629f52,base,M05_correction_limit,True,wrong_arg_value,,timeline,timeline,True,True,True,
+v1b_B_base_openai_20261110T101547908400,v1b,v1b+pb5aaf666fa7e+t8db0ba629f52,base,M06_switch_tool,True,wrong_tool,,lookup,lookup,True,True,True,
+v1c_B_base_openai_20261110T101922117035,v1c,v1c+p1c3185777e69+t8db0ba629f52,base,R01_user_tweets_routing,False,wrong_tool,,timeline,timeline,True,True,True,
+v1c_B_base_openai_20261110T101922117035,v1c,v1c+p1c3185777e69+t8db0ba629f52,base,R02_search_tweets_routing,False,wrong_tool,,social_search,social_search,True,True,True,
+v1c_B_base_openai_20261110T101922117035,v1c,v1c+p1c3185777e69+t8db0ba629f52,base,R03_web_news_routing,False,wrong_tool,wrong_arg_value,lookup,lookup,False,True,False,"query: expected 'AI', got 'tin tức trí tuệ nhân tạo AI hôm nay'"
+v1c_B_base_openai_20261110T101922117035,v1c,v1c+p1c3185777e69+t8db0ba629f52,base,R04_read_url_routing,False,wrong_tool,,fetch,fetch,True,True,True,
+v1c_B_base_openai_20261110T101922117035,v1c,v1c+p1c3185777e69+t8db0ba629f52,base,R05_limit_arg,False,wrong_arg_value,,timeline,timeline,True,True,True,
+v1c_B_base_openai_20261110T101922117035,v1c,v1c+p1c3185777e69+t8db0ba629f52,base,R06_timeframe_arg,False,wrong_arg_value,,lookup,lookup,True,True,True,
+v1c_B_base_openai_20261110T101922117035,v1c,v1c+p1c3185777e69+t8db0ba629f52,base,R07_search_type_arg,False,wrong_arg_value,,social_search,social_search,True,True,True,
+v1c_B_base_openai_20261110T101922117035,v1c,v1c+p1c3185777e69+t8db0ba629f52,base,R08_out_of_scope,False,out_of_scope,,no_tool,,True,True,True,
+v1c_B_base_openai_20261110T101922117035,v1c,v1c+p1c3185777e69+t8db0ba629f52,base,R09_no_tool_capability,False,unnecessary_tool,,no_tool,,True,True,True,
+v1c_B_base_openai_20261110T101922117035,v1c,v1c+p1c3185777e69+t8db0ba629f52,base,R10_missing_handle,False,missing_info,,clarify,clarify,True,True,True,
+v1c_B_base_openai_20261110T101922117035,v1c,v1c+p1c3185777e69+t8db0ba629f52,base,R11_missing_url,False,missing_info,,clarify,clarify,True,True,True,
+v1c_B_base_openai_20261110T101922117035,v1c,v1c+p1c3185777e69+t8db0ba629f52,base,R12_confirm_before_send,False,wrong_boundary,wrong_arg_value,clarify,clarify,False,True,False,"response_type: expected 'yes_no', got 'text'"
+v1c_B_base_openai_20261110T101922117035,v1c,v1c+p1c3185777e69+t8db0ba629f52,base,R13_parallel_web_and_tweets,False,wrong_tool,wrong_arg_value,lookup|social_search,lookup|social_search,False,True,False,"query: expected 'AI', got 'tin tức trí tuệ nhân tạo AI hôm nay'; query: expected 'AI', got 'AI OR artificial intelligence'"
+v1c_B_base_openai_20261110T101922117035,v1c,v1c+p1c3185777e69+t8db0ba629f52,base,R14_out_of_scope_coding,False,out_of_scope,,no_tool,,True,True,True,
+v1c_B_base_openai_20261110T101922117035,v1c,v1c+p1c3185777e69+t8db0ba629f52,base,M01_clarify_then_fill,True,missing_info,,timeline,timeline,True,True,True,
+v1c_B_base_openai_20261110T101922117035,v1c,v1c+p1c3185777e69+t8db0ba629f52,base,M02_carryover_timeframe,True,wrong_arg_value,wrong_arg_value,lookup,lookup,False,True,False,"query: expected 'robotics', got 'robotics news today'"
+v1c_B_base_openai_20261110T101922117035,v1c,v1c+p1c3185777e69+t8db0ba629f52,base,M03_correction_handle,True,wrong_arg_value,,timeline,timeline,True,True,True,
+v1c_B_base_openai_20261110T101922117035,v1c,v1c+p1c3185777e69+t8db0ba629f52,base,M04_clarify_then_url,True,missing_info,,fetch,fetch,True,True,True,
+v1c_B_base_openai_20261110T101922117035,v1c,v1c+p1c3185777e69+t8db0ba629f52,base,M05_correction_limit,True,wrong_arg_value,,timeline,timeline,True,True,True,
+v1c_B_base_openai_20261110T101922117035,v1c,v1c+p1c3185777e69+t8db0ba629f52,base,M06_switch_tool,True,wrong_tool,,lookup,lookup,True,True,True,
