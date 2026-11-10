@@ -10,6 +10,8 @@ in the same format, so UI sessions count as live-chat evidence.
 """
 from __future__ import annotations
 
+import difflib
+import hashlib
 import json
 import os
 import re
@@ -202,9 +204,10 @@ st.markdown(
 )
 
 # Render main tabs
-tab_chat, tab_versions, tab_v0_analysis, tab_v1_analysis, tab_tools, tab_report = st.tabs([
+tab_chat, tab_versions, tab_prompts, tab_v0_analysis, tab_v1_analysis, tab_tools, tab_report = st.tabs([
     "💬 Live Chat Agent",
     "📊 Version Evidence (v0 → v3)",
+    "📜 Full Prompts Evolution",
     "🔍 v0 Baseline Analysis",
     "🔬 v1 Iterations (v1, v1b, v1c)",
     "🛠️ Tool Registry (14 Tools)",
@@ -216,6 +219,19 @@ tab_chat, tab_versions, tab_v0_analysis, tab_v1_analysis, tab_tools, tab_report 
 # TAB 1: LIVE CHAT AGENT
 # ==============================================================================
 with tab_chat:
+    # Full prompt inspection toggle for active session
+    curr_active_prompt = prompt_path.read_text(encoding="utf-8") if prompt_path.exists() else ""
+    with st.expander(f"📜 Xem toàn bộ System Prompt đang dùng (Phiên bản: {version_label})", expanded=False):
+        c_pm1, c_pm2 = st.columns([3, 1])
+        with c_pm1:
+            st.code(curr_active_prompt, language="markdown")
+        with c_pm2:
+            st.caption("Thông tin Prompt:")
+            st.markdown(f"- **Đường dẫn:** `{prompt_path.name}`")
+            st.markdown(f"- **Số từ:** `{len(curr_active_prompt.split())} từ`")
+            st.markdown(f"- **Số ký tự:** `{len(curr_active_prompt)} ký tự`")
+            st.markdown(f"- **SHA-256:** `{hashlib.sha256(curr_active_prompt.encode('utf-8')).hexdigest()[:12]}`")
+
     st.subheader("💡 Câu hỏi mẫu (Quick Prompts)")
 
     col_q1, col_q2, col_q3 = st.columns(3)
@@ -423,7 +439,118 @@ with tab_versions:
 
 
 # ==============================================================================
-# TAB 3: v0 BASELINE & FAILURE ANALYSIS
+# TAB 3: FULL PROMPTS EVOLUTION (v0 → v3)
+# ==============================================================================
+with tab_prompts:
+    st.header("📜 Toàn bộ System Prompts qua các Phiên bản (Full Prompts)")
+    st.markdown("""
+    Khám phá toàn văn, cấu trúc chi tiết, và sự thay đổi từng dòng chữ của System Prompt từ bản **v0 Baseline** đến **v1c / v2 / v2b**.
+    Mỗi thay đổi đều giải quyết một điểm yếu cụ thể trong hành vi ra quyết định của Agent.
+    """)
+
+    # Load all prompts
+    all_prompts = {
+        "v0 (Baseline)": {
+            "path": ARTIFACTS_DIR / "system_prompt_v0.md",
+            "tag": "❌ Anti-patterns & Guessing",
+            "role": "fast, proactive",
+            "clarify_rule": "❌ Cấm hỏi lại ('hates being asked questions'), tự đoán Sam Altman hoặc URL bừa bãi",
+            "send_rule": "❌ Tự gửi ngay lập tức ('just go ahead and do it')",
+            "step_rule": "❌ Ép 1 bước cứng nhắc ('Always finish in a single step. Pick one tool')",
+            "acc": "65%",
+            "routing": "80%",
+        },
+        "v1 (Clarify Added)": {
+            "path": ARTIFACTS_DIR / "system_prompt_v1.md",
+            "tag": "⚠️ Clarify Added (Handle Regression)",
+            "role": "fast, proactive",
+            "clarify_rule": "✅ Bắt buộc gọi clarify khi thiếu info. ❌ Thêm câu quá chặt: 'Never invent account handles or URLs'",
+            "send_rule": "✅ Chặn tự gửi, chỉ gửi khi confirmed=true",
+            "step_rule": "❌ Vẫn ép 1 bước cứng nhắc",
+            "acc": "55%",
+            "routing": "85%",
+        },
+        "v1b (Handle Restored)": {
+            "path": ARTIFACTS_DIR / "system_prompt_v1b.md",
+            "tag": "🔄 Handle Mapping Recovered",
+            "role": "fast, proactive",
+            "clarify_rule": "✅ Bắt buộc gọi clarify. ✅ Xóa bỏ câu cấm invent handles ➔ Phục hồi mapping tên người sang handle",
+            "send_rule": "✅ Chỉ gửi khi có xác nhận",
+            "step_rule": "❌ Vẫn ép 1 bước cứng nhắc (vướng out-of-scope)",
+            "acc": "70%",
+            "routing": "90%",
+        },
+        "v1c / v2 / v2b (Final)": {
+            "path": ARTIFACTS_DIR / "system_prompt.md",
+            "tag": "🏆 100% Routing Accuracy",
+            "role": "professional, proactive",
+            "clarify_rule": "✅ Bắt buộc gọi clarify khi thiếu info",
+            "send_rule": "✅ Chỉ gửi khi confirmed=true",
+            "step_rule": "✅ Làm mềm: 'Consider finish the request in a single step' (cho phép no_tool cho out-of-scope)",
+            "acc": "80%",
+            "routing": "100%",
+        },
+    }
+
+    # High-level summary of prompt components
+    st.subheader("📑 4 Thành phần Cốt lõi của System Prompt")
+    c_cmp1, c_cmp2, c_cmp3, c_cmp4 = st.columns(4)
+    with c_cmp1:
+        st.markdown("**1. Định hình Persona**")
+        st.caption("Từ `fast` (hấp tấp, đoán bừa) ➔ `professional` (chuyên nghiệp, chuẩn mực).")
+    with c_cmp2:
+        st.markdown("**2. Xử lý Thiếu Thông tin**")
+        st.caption("Từ ép đoán `@sama`/URL ➔ bắt buộc gọi tool `clarify` một câu ngắn gọn rồi dừng chờ.")
+    with c_cmp3:
+        st.markdown("**3. Biên An toàn Gửi tin**")
+        st.caption("Từ tự ý gửi ➔ bắt buộc hiển thị nội dung và yêu cầu xác nhận `confirmed=true`.")
+    with c_cmp4:
+        st.markdown("**4. Ranh giới Gọi Tool**")
+        st.caption("Từ ép 'Pick one tool' ➔ 'Consider finish...' cho phép từ chối gọi tool cho câu ngoài phạm vi.")
+
+    st.markdown("---")
+
+    # 4-Column Side-by-Side Full Prompts Display
+    st.subheader("👀 Hiển thị Toàn văn 4 Phiên bản Cạnh nhau (Side-by-Side Grid)")
+
+    cols_full = st.columns(4)
+    for col, (v_name, v_info) in zip(cols_full, all_prompts.items()):
+        with col:
+            st.markdown(f"#### {v_name}")
+            st.caption(f"**Trạng thái:** {v_info['tag']}")
+            st.caption(f"**Chỉ số:** Case Acc `{v_info['acc']}` · Routing `{v_info['routing']}`")
+            p_text = v_info["path"].read_text(encoding="utf-8") if v_info["path"].exists() else "File not found"
+            st.text_area(f"Full text ({v_name})", value=p_text, height=350, disabled=True, key=f"txt_full_{v_name}")
+
+            with st.expander("🔍 Chi tiết cấu trúc", expanded=False):
+                st.markdown(f"- **Persona:** `{v_info['role']}`")
+                st.markdown(f"- **Hỏi lại:** {v_info['clarify_rule']}")
+                st.markdown(f"- **Gửi tin:** {v_info['send_rule']}")
+                st.markdown(f"- **Số bước:** {v_info['step_rule']}")
+
+    st.markdown("---")
+
+    # Interactive Diff Tool
+    st.subheader("⚖️ So sánh Trực quan Diff giữa 2 Phiên bản Bất kỳ")
+    c_diff_sel1, c_diff_sel2 = st.columns(2)
+    with c_diff_sel1:
+        diff_ver_a = st.selectbox("Chọn Phiên bản A (Gốc):", list(all_prompts.keys()), index=0)
+    with c_diff_sel2:
+        diff_ver_b = st.selectbox("Chọn Phiên bản B (So sánh):", list(all_prompts.keys()), index=3)
+
+    if diff_ver_a and diff_ver_b:
+        text_a = all_prompts[diff_ver_a]["path"].read_text(encoding="utf-8").splitlines(keepends=True)
+        text_b = all_prompts[diff_ver_b]["path"].read_text(encoding="utf-8").splitlines(keepends=True)
+
+        diff_lines = list(difflib.unified_diff(text_a, text_b, fromfile=diff_ver_a, tofile=diff_ver_b))
+        if diff_lines:
+            st.code("".join(diff_lines), language="diff")
+        else:
+            st.success("Hai phiên bản prompt này có nội dung hoàn toàn giống nhau.")
+
+
+# ==============================================================================
+# TAB 4: v0 BASELINE & FAILURE ANALYSIS
 # ==============================================================================
 with tab_v0_analysis:
     st.header("🔍 Phân tích Chi tiết Lỗi ở Baseline v0")
@@ -530,7 +657,7 @@ with tab_v0_analysis:
 
 
 # ==============================================================================
-# TAB 4: v1 ITERATIONS & PROMPT TUNING (v1, v1b, v1c)
+# TAB 5: v1 ITERATIONS & PROMPT TUNING (v1, v1b, v1c)
 # ==============================================================================
 with tab_v1_analysis:
     st.header("🔬 Quá trình Tinh chỉnh Prompt v1 (v1 ➔ v1b ➔ v1c)")
@@ -671,7 +798,7 @@ with tab_v1_analysis:
 
 
 # ==============================================================================
-# TAB 5: TOOL REGISTRY (14 TOOLS)
+# TAB 6: TOOL REGISTRY (14 TOOLS)
 # ==============================================================================
 with tab_tools:
     st.header("🛠️ Tool Registry & Danh mục Công cụ (14 Tools)")
@@ -716,7 +843,7 @@ with tab_tools:
 
 
 # ==============================================================================
-# TAB 6: PROJECT REPORT & SHOWDOWN
+# TAB 7: PROJECT REPORT & SHOWDOWN
 # ==============================================================================
 with tab_report:
     st.header("📑 Day 03 Research Agent Report")
