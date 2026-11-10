@@ -16,6 +16,8 @@
 
 ## A1. Agent này làm được gì
 
+## A1. Agent này làm được gì
+
 **Research agent tiếng Việt:** tìm tin tức trên web, theo dõi tweet của một tài khoản hoặc cả cộng đồng Twitter/X, đọc và tóm tắt bài viết từ URL, tra paper arXiv, Wikipedia, Hacker News và GitHub, tính toán số, rồi tổng hợp thành bản tin markdown. Agent **hỏi lại khi thiếu thông tin** (không đoán account hay URL), **xin xác nhận trước khi gửi** Telegram, và từ chối việc ngoài phạm vi research (giải toán, viết code, đặt vé…).
 
 Kết quả eval hiện tại (`v2b`): base **0.80**, routing 0.95; group (10 case nhóm tự viết) **0.80**. Baseline `v0` là 0.65.
@@ -24,7 +26,7 @@ Kết quả eval hiện tại (`v2b`): base **0.80**, routing 0.95; group (10 ca
 
 > UI Streamlit (`streamlit run app.py`) public qua Cloudflare Tunnel.
 >
-> URL: _(điền link `https://….trycloudflare.com` khi mở tunnel)_
+> URL: https://postcards-regard-ethical-pitch.trycloudflare.com/
 
 ## A2. Tool agent có
 
@@ -65,10 +67,13 @@ Fill from `artifacts/version_log.csv` and `runs/*.json`.
 
 | Version | Changed Artifact | Hypothesis | Metric Before | Metric After | Run File |
 |---|---|---|---:|---:|---|
-| v0 | baseline |  |  |  |  |
-| v1 |  |  |  |  |  |
-| v2 |  |  |  |  |  |
-| v3 |  |  |  |  |  |
+| v0 | baseline | n/a (baseline starter prompt/tools on openai gpt-6-luna) | n/a | case_acc=0.65 routing=0.80 args=0.65 multiturn=0.83 | runs/v0_B_base_openai_20261110T095815539037.json |
+| v1 | system_prompt.md | Removing guess/send-without-confirm instructions and requiring clarify fixes missing_info + wrong_boundary | case_acc=0.65 | case_acc=0.55 routing=0.85 args=0.55 multiturn=0.50 | runs/v1_B_base_openai_20261110T101417806341.json |
+| v1b | system_prompt.md | The "never invent handles" sentence stops the model mapping a named person to their handle | case_acc=0.55 | case_acc=0.70 routing=0.90 args=0.70 multiturn=0.83 | runs/v1b_B_base_openai_20261110T101547908400.json |
+| v1c | system_prompt.md | Softening 'Always finish in a single step / Pick one tool' stops forced tool calls on out_of_scope queries | case_acc=0.70 | case_acc=0.80 routing=1.00 args=0.80 multiturn=0.83 | runs/v1c_B_base_openai_20261110T101922117035.json |
+| v2 | tools.yaml | Explicit WHEN/WHEN NOT boundary descriptions on new tools prevent routing collisions with existing core tools | case_acc=0.80 | case_acc=0.80 routing=1.00 args=0.80 multiturn=0.83 | runs/v2_B_base_openai_20261110T104228751676.json |
+| v2b | tools.yaml | Adding 2 more tools with when/when-not descriptions keeps base accuracy at v2 level | case_acc=0.80 | case_acc=0.80 routing=0.95 args=0.80 multiturn=0.83 | runs/v2b_B_base_openai_20261110T105236817463.json |
+| v2b-group | data/eval_group.json | Team cases expose out_of_scope action requests and yes_no confirm boundary as remaining weaknesses | n/a | case_acc=0.80 routing=0.90 args=0.80 multiturn=0.80 | runs/v2b_B_group_openai_20261110T105040796999.json |
 
 ## B2. Failure Analysis
 
@@ -76,7 +81,13 @@ Use actual failures from `results[*].result.failures`.
 
 | Case ID | Failure Type | Actual Tool Calls | What Failed | Fix |
 |---|---|---|---|---|
-|  |  |  |  |  |
+| R10_missing_handle | missing_info | timeline | Tự đoán handle `@sama` thay vì gọi clarify | Bắt buộc gọi clarify khi thiếu thông tin tài khoản |
+| R11_missing_url | missing_info | fetch | Tự đoán URL openai.com thay vì gọi clarify | Bắt buộc gọi clarify khi thiếu URL cụ thể |
+| R12_confirm_before_send | wrong_boundary | send | Tự ý gửi với `confirmed=true` chưa hỏi người dùng | Thiết lập boundary an toàn: chỉ gửi khi người dùng đã xác nhận |
+| R14_out_of_scope_coding | out_of_scope | format | Ép gọi tool format cho yêu cầu viết code python | Đổi chỉ dẫn single-step sang "Consider finish...", cho phép trả lời trực tiếp |
+| R03_web_news_routing | wrong_arg_value | lookup | Truy vấn query quá dài, không trích xuất đúng từ khóa | Định nghĩa rõ quy ước trích xuất query, topic=news, timeframe |
+| R13_parallel_web_and_tweets | wrong_tool | lookup | Thiếu lệnh gọi song song `social_search` | Cho phép agent thực hiện multi-tool calls song song |
+| M02_carryover_timeframe | wrong_arg_value | lookup | Query mang theo cụm từ thời gian dư thừa | Quy định rõ timeframe đi vào parameter `timeframe`, không để trong `query` |
 
 ## B3. Team Eval Cases
 

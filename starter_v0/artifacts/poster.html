@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research Agent Studio — Day 03 Showdown Poster</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #38bdf8;
+      --accent-grad: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --danger: #f87171;
+      --border: #334155;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 32px 20px;
+    }
+    .poster-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+    header {
+      text-align: center;
+      margin-bottom: 36px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: var(--accent-grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+    .tagline {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .live-link-box {
+      margin-top: 18px;
+      background: rgba(52, 211, 153, 0.1);
+      border: 1px dashed var(--success);
+      padding: 12px 24px;
+      border-radius: 12px;
+      display: inline-block;
+    }
+    .live-link-box a {
+      color: var(--success);
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .live-link-box a:hover { text-decoration: underline; }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+    .kpi-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+    }
+    .kpi-value {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .kpi-delta {
+      font-size: 0.85rem;
+      color: var(--success);
+      font-weight: 600;
+      margin-top: 4px;
+    }
+    .kpi-label {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* Grid columns */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    .section-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Tool cards */
+    .tool-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .tool-item {
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+    }
+    .tool-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .tool-name {
+      font-family: monospace;
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 0.95rem;
+    }
+    .tool-tag {
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: rgba(192, 132, 252, 0.2);
+      color: #c084fc;
+      font-weight: 600;
+    }
+    .tool-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Sample queries */
+    .query-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .query-item {
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 0.9rem;
+    }
+    .query-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+
+    /* Timeline */
+    .timeline {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin-top: 20px;
+    }
+    .step {
+      text-align: center;
+      flex: 1;
+      position: relative;
+    }
+    .step-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin: 0 auto 8px auto;
+      box-shadow: 0 0 10px var(--accent);
+    }
+    .step-name { font-weight: 700; font-size: 0.9rem; }
+    .step-acc { font-size: 0.8rem; color: var(--success); }
+
+    footer {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+      margin-top: 32px;
+    }
+  </style>
+</head>
+<body>
+  <div class="poster-container">
+    <header>
+      <div class="badge">🚀 Day 03 Team Showdown • Research Agent Lab</div>
+      <h1>Research Agent Studio</h1>
+      <p class="tagline">Hệ thống AI Research Agent tối ưu qua 6 chu kỳ bằng chứng: Tra cứu đa nguồn, bảo vệ biên an toàn (Safety Boundary), xử lý đa lượt và mở rộng 4 công cụ chuyên sâu.</p>
+      
+      <div class="live-link-box">
+        🌐 Dùng thử trực tiếp: <a href="https://postcards-regard-ethical-pitch.trycloudflare.com/" target="_blank">https://postcards-regard-ethical-pitch.trycloudflare.com/</a>
+      </div>
+    </header>
+
+    <!-- KPI Metrics -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-value">80.0%</div>
+        <div class="kpi-delta">▲ +15% so với v0 (65%)</div>
+        <div class="kpi-label">Case Accuracy (16/20 Passed)</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value">100%</div>
+        <div class="kpi-delta">▲ +20% so với v0 (80%)</div>
+        <div class="kpi-label">Tool Routing Accuracy</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value">14 Tools</div>
+        <div class="kpi-delta">✨ +4 Tool mới nhóm tự viết</div>
+        <div class="kpi-label">Total Registered Tools</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value">112/112</div>
+        <div class="kpi-delta">✅ 100% Green Unit Tests</div>
+        <div class="kpi-label">Pytest Contract & Tool Tests</div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <!-- 4 New Tools -->
+      <div class="section-card">
+        <div class="section-title">✨ 4 Tool Mới Nhóm Tự Thêm (Bonus)</div>
+        <div class="tool-list">
+          <div class="tool-item">
+            <div class="tool-header">
+              <span class="tool-name">wikipedia</span>
+              <span class="tool-tag">REST API</span>
+            </div>
+            <div class="tool-desc">Tra cứu bách khoa toàn thư, tự động fallback OpenSearch khi 404, trả về tóm tắt thực thể súc tích.</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-header">
+              <span class="tool-name">hackernews</span>
+              <span class="tool-tag">Algolia API</span>
+            </div>
+            <div class="tool-desc">Tìm kiếm tin tức và thảo luận chuyên sâu cộng đồng công nghệ trên HackerNews theo relevance/date.</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-header">
+              <span class="tool-name">github_repos</span>
+              <span class="tool-tag">GitHub API</span>
+            </div>
+            <div class="tool-desc">Tìm kiếm repository mã nguồn mở theo stars, keywords, ngôn ngữ lập trình kèm link và description.</div>
+          </div>
+          <div class="tool-item">
+            <div class="tool-header">
+              <span class="tool-name">calculator</span>
+              <span class="tool-tag">Safe AST Parse</span>
+            </div>
+            <div class="tool-desc">Tính toán số học an toàn bằng ast.parse (whitelist phép toán, chặn eval injection, chống tràn số mũ).</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sample queries -->
+      <div class="section-card">
+        <div class="section-title">🎯 Câu Hỏi Mẫu Nên Thử</div>
+        <div class="query-list">
+          <div class="query-item">
+            <span class="query-badge" style="color: var(--warning)">⚠️ Test Biên Safety & Clarify</span><br>
+            <strong>"Cho mình xem tweet gần đây"</strong> ➔ Agent không đoán mò như v0 mà gọi <code>clarify</code> hỏi tài khoản của ai.
+          </div>
+          <div class="query-item">
+            <span class="query-badge" style="color: var(--danger)">🛡️ Test Confirm Before Send</span><br>
+            <strong>"Gửi tin nhắn này lên Telegram: Báo cáo đã xong"</strong> ➔ Agent dừng lại xin xác nhận của user trước khi gửi.
+          </div>
+          <div class="query-item">
+            <span class="query-badge" style="color: var(--accent)">🔍 Tra cứu thông tin thời sự</span><br>
+            <strong>"Tin tức AI hôm nay có gì nổi bật?"</strong> ➔ Route đúng <code>lookup</code> với <code>topic=news</code> và <code>timeframe=day</code>.
+          </div>
+          <div class="query-item">
+            <span class="query-badge" style="color: var(--success)">🚀 Thử các Tool mới</span><br>
+            <strong>"Tìm 5 repo GitHub nhiều sao nhất về LLM Agents"</strong> hoặc <strong>"Tính: (150 * 4) + 250 / 5"</strong>.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Iteration Progression -->
+    <div class="section-card">
+      <div class="section-title">📈 Quá Trình Tiến Hóa (Evidence-Driven Iterations)</div>
+      <div class="timeline">
+        <div class="step">
+          <div class="step-dot" style="background: var(--danger)"></div>
+          <div class="step-name">v0 (Baseline)</div>
+          <div class="step-acc" style="color: var(--danger)">65% Acc (7 lỗi)</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted)">Prompt đoán mò, ép 1 bước</div>
+        </div>
+        <div class="step">
+          <div class="step-dot" style="background: var(--warning)"></div>
+          <div class="step-name">v1</div>
+          <div class="step-acc" style="color: var(--warning)">55% Acc</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted)">Yêu cầu clarify, cấm đoán URL</div>
+        </div>
+        <div class="step">
+          <div class="step-dot"></div>
+          <div class="step-name">v1b</div>
+          <div class="step-acc">70% Acc</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted)">Khôi phục name-to-handle</div>
+        </div>
+        <div class="step">
+          <div class="step-dot"></div>
+          <div class="step-name">v1c</div>
+          <div class="step-acc">80% Acc (100% Route)</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted)">Soften single-step</div>
+        </div>
+        <div class="step">
+          <div class="step-dot"></div>
+          <div class="step-name">v2</div>
+          <div class="step-acc">80% Acc (100% Route)</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted)">Merge Wikipedia + HackerNews</div>
+        </div>
+        <div class="step">
+          <div class="step-dot" style="background: var(--success)"></div>
+          <div class="step-name">v2b (Final)</div>
+          <div class="step-acc" style="color: var(--success)">80% Acc (4 New Tools)</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted)">Merge Calculator + GitHub</div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      Antigravity Research Agent Studio • K5-L3-DAY03 • Team: KhuatHieu, thdanhnguyen, HViettt, doanlong9304
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "transcript_id": "v3_openrouter_ui_20261110T112857795474",
+  "version": "v3",
+  "artifact_version": "v3+p7967f9561e2b+te1d3ac6b1a08",
+  "prompt_hash": "7967f9561e2beba5e71d7024e4247b09e76dccf19f0e209da8072d422c2be268",
+  "tools_hash": "e1d3ac6b1a08e53fdbfba47b0376ebef3c19afa3314f0abf99c9baa658952317",
+  "provider": "openrouter",
+  "model": null,
+  "source": "streamlit",
+  "system_prompt": "D:\\AI thuchien\\K5-L3-DAY03-KhuatDuyHieu-2A202603383-ResearchAgentToolEval\\starter_v0\\artifacts\\system_prompt.md",
+  "tools": "D:\\AI thuchien\\K5-L3-DAY03-KhuatDuyHieu-2A202603383-ResearchAgentToolEval\\starter_v0\\artifacts\\tools.yaml",
+  "history_window": 5,
+  "max_tool_rounds": 4,
+  "created_at": "2026-11-10T11:28:57",
+  "updated_at": "2026-11-10T11:29:40",
+  "turns": [
+    {
+      "turn_index": 1,
+      "started_at": "2026-11-10T11:29:40",
+      "user": " 1 +2 nhân 3 bằng bao nhiêu",
+      "status": "provider_error",
+      "error": "❌ RuntimeError: Missing API key env var: OPENAI_API_KEY",
+      "ended_at": "2026-11-10T11:29:40"
+    }
+  ]
+}
