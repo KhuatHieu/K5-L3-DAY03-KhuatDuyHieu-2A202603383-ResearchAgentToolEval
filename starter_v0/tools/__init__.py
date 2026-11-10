@@ -18,8 +18,8 @@ from .social_search.tool import search_tweets
 from .send.tool import send_telegram
 from .lookup.tool import web_search
 # New team tools (registered here; add to artifacts/tools.yaml only when implemented + tested)
-from .wikipedia.tool import wikipedia_summary      # owner: thdanhnguyen
-from .hackernews.tool import hn_search             # owner: thdanhnguyen
+from .wikipedia.tool import wikipedia_summary  
+from .hackernews.tool import hn_search            
 from .github_repos.tool import search_github_repos  # owner: HViettt
 from .calculator.tool import calculate             # owner: HViettt
 
