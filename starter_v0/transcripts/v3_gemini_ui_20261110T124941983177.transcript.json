@@ -1,0 +1,26 @@
+{
+  "transcript_id": "v3_gemini_ui_20261110T124941983177",
+  "version": "v3",
+  "artifact_version": "v3+pbbba25419dc5+tc9044b1258fe",
+  "prompt_hash": "bbba25419dc56743e9b2ca2f771053f0941b3882144589f5043d85212c11984a",
+  "tools_hash": "c9044b1258fe544f277a86f842daaacddc772f82bd5e76dc863cf92d7f86922f",
+  "provider": "gemini",
+  "model": null,
+  "source": "streamlit",
+  "system_prompt": "D:\\AI thuchien\\K5-L3-DAY03-KhuatDuyHieu-2A202603383-ResearchAgentToolEval\\starter_v0\\artifacts\\system_prompt.md",
+  "tools": "D:\\AI thuchien\\K5-L3-DAY03-KhuatDuyHieu-2A202603383-ResearchAgentToolEval\\starter_v0\\artifacts\\tools.yaml",
+  "history_window": 5,
+  "max_tool_rounds": 4,
+  "created_at": "2026-11-10T12:49:41",
+  "updated_at": "2026-11-10T12:49:49",
+  "turns": [
+    {
+      "turn_index": 1,
+      "started_at": "2026-11-10T12:49:48",
+      "user": "gửi tin qua telegram",
+      "status": "provider_error",
+      "error": "❌ ClientError: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash, description: Generate content requests per day limit exceeded on Free Tier. See https://aistudio.google.com/docs/rate-limits.\\nPlease retry in 2h10m10.619158576s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://aistudio.google.com/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'description': 'Generate content requests per day limit exceeded on Free Tier. See https://aistudio.google.com/docs/rate-limits.', 'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-3.6-flash'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '7810s'}]}}",
+      "ended_at": "2026-11-10T12:49:49"
+    }
+  ]
+}

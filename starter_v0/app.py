@@ -45,6 +45,7 @@ st.set_page_config(
 )
 
 PROVIDERS = ["openrouter", "openai", "gemini", "anthropic", "ollama"]
+DATA_DIR = ROOT / "data"
 
 # Pre-defined versions mapping
 VERSION_PRESETS: dict[str, dict[str, Any]] = {
@@ -204,10 +205,11 @@ st.markdown(
 )
 
 # Render main tabs
-tab_chat, tab_versions, tab_prompts, tab_v0_analysis, tab_v1_analysis, tab_tools, tab_report = st.tabs([
+tab_chat, tab_versions, tab_prompts, tab_dataset, tab_v0_analysis, tab_v1_analysis, tab_tools, tab_report = st.tabs([
     "💬 Live Chat Agent",
     "📊 Version Evidence (v0 → v3)",
     "📜 Full Prompts Evolution",
+    "🧪 Full Dataset Eval Studio",
     "🔍 v0 Baseline Analysis",
     "🔬 v1 Iterations (v1, v1b, v1c)",
     "🛠️ Tool Registry (14 Tools)",
@@ -550,7 +552,217 @@ with tab_prompts:
 
 
 # ==============================================================================
-# TAB 4: v0 BASELINE & FAILURE ANALYSIS
+# TAB 4: FULL DATASET EVAL STUDIO
+# ==============================================================================
+with tab_dataset:
+    st.header("🧪 Full Dataset Eval Studio (Toàn bộ Dữ liệu Đánh giá)")
+    st.markdown("""
+    Khám phá và tra cứu toàn văn toàn bộ **40 Test Cases** trên cả 3 bộ dữ liệu:
+    **Base Suite** (20 cases), **Team Group Suite** (10 cases do nhóm thiết kế), và **Extension Suite** (10 cases).
+    Xem cấu trúc kỳ vọng, hội thoại đa lượt, và đối chiếu kết quả chạy thật trên bản **v2b**.
+    """)
+
+    # Datasets dictionary
+    datasets_meta: dict[str, dict[str, Any]] = {
+        "Base Suite (eval_base.json — 20 cases)": {
+            "path": DATA_DIR / "eval_base.json",
+            "run_path": ROOT / "runs" / "v2b_B_base_openai_20261110T105236817463.json",
+            "desc": "Core eval cho research agent: routing đúng tool + đúng args, hỏi lại khi thiếu (clarify), xác nhận trước khi gửi, và xử lý ngoài phạm vi.",
+            "role": "base",
+        },
+        "Team Group Suite (eval_group.json — 10 cases)": {
+            "path": DATA_DIR / "eval_group.json",
+            "run_path": ROOT / "runs" / "v2b_B_group_openai_20261110T105040796999.json",
+            "desc": "10 eval cases nhóm tự thiết kế (5 single-turn, 5 multi-turn) phủ 4 tool mới (Wikipedia, HN, GitHub, Calculator) và ranh giới safety.",
+            "role": "group",
+        },
+        "Extension Suite (eval_research_extension.json — 10 cases)": {
+            "path": DATA_DIR / "eval_research_extension.json",
+            "run_path": None,
+            "desc": "Bộ mở rộng kiểm thử các công cụ phụ trợ nâng cao: company policy, tra cứu arxiv papers, và đọc toàn văn paper_text.",
+            "role": "extension",
+        },
+    }
+
+    # Top KPI Cards
+    col_ds1, col_ds2, col_ds3, col_ds4 = st.columns(4)
+    with col_ds1:
+        st.metric("Tổng số Test Cases", "40 Cases", "3 bộ dữ liệu")
+    with col_ds2:
+        st.metric("Base Suite Acc (v2b)", "80.0%", "16/20 Passed (Routing 95%)")
+    with col_ds3:
+        st.metric("Team Group Acc (v2b)", "80.0%", "8/10 Passed (Phủ 4 tool mới)")
+    with col_ds4:
+        st.metric("Cấu trúc Hội thoại", "24 Single / 16 Multi", "Bảo đảm tính liên tục")
+
+    st.markdown("---")
+
+    # Dataset Switcher & Controls
+    c_sel_ds, c_filter_turn, c_filter_res = st.columns([2, 1, 1])
+    with c_sel_ds:
+        chosen_ds_name = st.selectbox("Chọn Bộ Dữ Liệu:", list(datasets_meta.keys()), index=0)
+    with c_filter_turn:
+        chosen_turn_type = st.selectbox("Loại Turn:", ["Tất cả", "Single-turn", "Multi-turn"], index=0)
+    with c_filter_res:
+        chosen_res_filter = st.selectbox("Lọc Kết quả (v2b):", ["Tất cả", "Chỉ hiện PASS", "Chỉ hiện FAIL"], index=0)
+
+    ds_info = datasets_meta[chosen_ds_name]
+    raw_ds_data = json.loads(ds_info["path"].read_text(encoding="utf-8")) if ds_info["path"].exists() else {"cases": []}
+    all_cases: list[dict[str, Any]] = raw_ds_data.get("cases", [])
+
+    # Load corresponding run if exists
+    run_results_map: dict[str, dict[str, Any]] = {}
+    if ds_info["run_path"] and ds_info["run_path"].exists():
+        r_json = json.loads(ds_info["run_path"].read_text(encoding="utf-8"))
+        for item in r_json.get("results", []):
+            run_results_map[item.get("id")] = item.get("result", {})
+
+    # Search bar
+    search_query = st.text_input("🔍 Tìm kiếm trong dataset (theo Case ID, query, skill, hoặc tool)...", value="")
+
+    # Filter logic
+    filtered_cases = []
+    for c in all_cases:
+        cid = c.get("id", "")
+        is_multi = "turns" in c
+        q_text = c.get("query", "")
+        if is_multi:
+            q_text = " | ".join(t.get("content", "") for t in c.get("turns", []))
+        skill = c.get("metadata", {}).get("skill", "")
+        wit = c.get("metadata", {}).get("what_it_tests", "")
+        exp_calls = c.get("expect", {}).get("tool_calls", [])
+        exp_tool_str = ", ".join(tc.get("name", "") for tc in exp_calls) if exp_calls else ("no_tool" if c.get("expect", {}).get("no_tool") else "")
+
+        # Result status
+        r_item = run_results_map.get(cid, {})
+        has_run = bool(r_item)
+        passed = r_item.get("passed", False)
+        status_str = ("PASS" if passed else "FAIL") if has_run else "Chưa chạy"
+
+        # Apply turn filter
+        if chosen_turn_type == "Single-turn" and is_multi:
+            continue
+        if chosen_turn_type == "Multi-turn" and not is_multi:
+            continue
+
+        # Apply result filter
+        if chosen_res_filter == "Chỉ hiện PASS" and status_str != "PASS":
+            continue
+        if chosen_res_filter == "Chỉ hiện FAIL" and status_str != "FAIL":
+            continue
+
+        # Apply search
+        full_haystack = f"{cid} {q_text} {skill} {wit} {exp_tool_str}".lower()
+        if search_query and search_query.lower() not in full_haystack:
+            continue
+
+        filtered_cases.append(c)
+
+    st.caption(f"Đang hiển thị **{len(filtered_cases)}/{len(all_cases)}** test cases:")
+
+    # Summary table
+    table_rows = []
+    for c in filtered_cases:
+        cid = c.get("id", "")
+        is_multi = "turns" in c
+        turn_lbl = "🔄 Multi-turn" if is_multi else "⚡ Single-turn"
+        q_preview = c.get("query", "")
+        if is_multi and c.get("turns"):
+            q_preview = c["turns"][0].get("content", "") + " ..."
+        exp_calls = c.get("expect", {}).get("tool_calls", [])
+        exp_tool_str = ", ".join(tc.get("name", "") for tc in exp_calls) if exp_calls else ("no_tool" if c.get("expect", {}).get("no_tool") else "")
+
+        r_item = run_results_map.get(cid, {})
+        status_badge = ("✅ PASS" if r_item.get("passed") else "❌ FAIL") if r_item else "N/A"
+        act_calls = r_item.get("actual_tool_calls", [])
+        act_tool_str = ", ".join(tc.get("name", "") for tc in act_calls) if act_calls else ("no_tool" if r_item else "-")
+
+        table_rows.append({
+            "Case ID": cid,
+            "Turn Type": turn_lbl,
+            "Failure Type Guard": c.get("failure_type", ""),
+            "Mục tiêu kiểm thử": c.get("metadata", {}).get("what_it_tests", "")[:60] + "...",
+            "Expected Tool": exp_tool_str,
+            "Actual Tool (v2b)": act_tool_str,
+            "Kết quả v2b": status_badge,
+        })
+
+    st.dataframe(pd.DataFrame(table_rows), use_container_width=True, hide_index=True)
+
+    st.markdown("---")
+    st.subheader("📋 Chi tiết Toàn văn Từng Test Case (Case Drilldown)")
+
+    for idx, c in enumerate(filtered_cases):
+        cid = c.get("id", "")
+        is_multi = "turns" in c
+        skill = c.get("metadata", {}).get("skill", "")
+        difficulty = c.get("metadata", {}).get("difficulty", "medium")
+        wit = c.get("metadata", {}).get("what_it_tests", "")
+        fail_type = c.get("failure_type", "")
+        exp_dict = c.get("expect", {})
+
+        r_item = run_results_map.get(cid, {})
+        status_icon = ("✅" if r_item.get("passed") else "❌") if r_item else "⚪"
+
+        exp_label = f"{status_icon} `{cid}` — [{c.get('phase', 'B')}] {skill} ({difficulty})"
+        with st.expander(exp_label, expanded=False):
+            c_col_q, c_col_exp = st.columns([3, 2])
+            with c_col_q:
+                st.markdown("#### 💬 Đầu vào (Input)")
+                if is_multi:
+                    st.caption(f"Luồng hội thoại đa lượt ({len(c.get('turns', []))} turns):")
+                    for t_idx, t in enumerate(c.get("turns", []), 1):
+                        role = t.get("role", "user")
+                        content = t.get("content", "")
+                        if role == "user":
+                            st.markdown(f"**Turn {t_idx} (User):** `{content}`")
+                        else:
+                            st.markdown(f"**Turn {t_idx} (Assistant):** *{content}*")
+                else:
+                    st.markdown(f"**Query đơn:**")
+                    st.info(f"👉 **\"{c.get('query')}\"**")
+
+                st.markdown("#### 🎯 Mục tiêu & Kỹ năng (What It Tests)")
+                st.write(wit or "Không có mô tả chi tiết.")
+                st.caption(f"Loại lỗi kiểm tra phòng vệ: `{fail_type}`")
+
+                # Quick button to test this query in live chat
+                sample_query_to_send = c.get("query") if not is_multi else (c.get("turns", [{}])[0].get("content") or "")
+                if sample_query_to_send:
+                    if st.button(f"💬 Nạp câu này vào Live Chat ({cid})", key=f"btn_send_eval_{cid}_{idx}"):
+                        st.session_state["queued_query"] = sample_query_to_send
+                        st.success(f"Đã nạp câu hỏi của case `{cid}`! Chuyển sang tab **💬 Live Chat Agent** để thử ngay.")
+
+            with c_col_exp:
+                st.markdown("#### 📦 Kỳ vọng Đầu ra (Expectation)")
+                st.json(exp_dict)
+
+                if r_item:
+                    st.markdown("#### 🏃 Kết quả Chạy Thực tế (v2b Run)")
+                    res_status = "✅ PASS" if r_item.get("passed") else "❌ FAIL"
+                    st.markdown(f"- **Trạng thái:** `{res_status}`")
+                    st.markdown(f"- **Routing đúng:** `{r_item.get('routing_correct')}`")
+                    st.markdown(f"- **Tham số đúng:** `{r_item.get('args_correct')}`")
+                    act_calls = r_item.get("actual_tool_calls", [])
+                    st.caption("Công cụ thực tế đã gọi:")
+                    st.json(act_calls or {"actual": "no_tool"})
+                    if r_item.get("failures"):
+                        st.error(f"Lỗi: {'; '.join(r_item['failures'])}")
+
+    st.markdown("---")
+    # Download JSON
+    st.subheader("📥 Tải File Dataset JSON Gốc")
+    ds_json_text = json.dumps(raw_ds_data, ensure_ascii=False, indent=2)
+    st.download_button(
+        label=f"Tải `{ds_info['path'].name}`",
+        data=ds_json_text,
+        file_name=ds_info["path"].name,
+        mime="application/json",
+    )
+
+
+# ==============================================================================
+# TAB 5: v0 BASELINE & FAILURE ANALYSIS
 # ==============================================================================
 with tab_v0_analysis:
     st.header("🔍 Phân tích Chi tiết Lỗi ở Baseline v0")
@@ -657,7 +869,7 @@ with tab_v0_analysis:
 
 
 # ==============================================================================
-# TAB 5: v1 ITERATIONS & PROMPT TUNING (v1, v1b, v1c)
+# TAB 6: v1 ITERATIONS & PROMPT TUNING (v1, v1b, v1c)
 # ==============================================================================
 with tab_v1_analysis:
     st.header("🔬 Quá trình Tinh chỉnh Prompt v1 (v1 ➔ v1b ➔ v1c)")
@@ -798,7 +1010,7 @@ with tab_v1_analysis:
 
 
 # ==============================================================================
-# TAB 6: TOOL REGISTRY (14 TOOLS)
+# TAB 7: TOOL REGISTRY (14 TOOLS)
 # ==============================================================================
 with tab_tools:
     st.header("🛠️ Tool Registry & Danh mục Công cụ (14 Tools)")
@@ -843,7 +1055,7 @@ with tab_tools:
 
 
 # ==============================================================================
-# TAB 7: PROJECT REPORT & SHOWDOWN
+# TAB 8: PROJECT REPORT & SHOWDOWN
 # ==============================================================================
 with tab_report:
     st.header("📑 Day 03 Research Agent Report")
