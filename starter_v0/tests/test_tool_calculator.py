@@ -1,25 +1,38 @@
 """Unit tests for the 'calculator' tool. Owner: HViettt. Need >= 3 real tests (0 skipped)."""
 from __future__ import annotations
 
-import pytest
-
-from conftest import FakeResponse  # noqa: F401
 from tools import TOOL_FUNCTIONS
 
-TODO = "TODO(HViettt): implement this test"
 calculator = TOOL_FUNCTIONS["calculator"]
 
 
 def test_calculator_happy_path() -> None:
-    # vd: calculator(expression="(2+3)*4") -> value == 20
-    pytest.skip(TODO)
+    res = calculator(expression="(2+3)*4")
+    assert res["tool"] == "calculate"
+    assert res["value"] == 20
+    assert res["expression"] == "(2+3)*4"
+
+    res_float = calculator(expression="10 / 4 + 2**3")
+    assert res_float["value"] == 10.5
 
 
 def test_calculator_rejects_unsafe_expression() -> None:
-    # vd: "__import__('os')" -> error dict, KHÔNG raise
-    pytest.skip(TODO)
+    res = calculator(expression="__import__('os').system('dir')")
+    assert "error" in res
+    assert res["tool"] == "calculate"
+
+    res_call = calculator(expression="abs(-5)")
+    assert "error" in res_call
+
+    res_attr = calculator(expression="[].__class__")
+    assert "error" in res_attr
 
 
 def test_calculator_bad_input_returns_error_dict() -> None:
-    # vd: "", "1/0", "abc" -> error dict, KHÔNG raise
-    pytest.skip(TODO)
+    assert "error" in calculator(expression="")
+    res_div = calculator(expression="1 / 0")
+    assert "error" in res_div
+    assert res_div["error"] == "ZeroDivisionError"
+
+    assert "error" in calculator(expression="abc + 5")
+    assert "error" in calculator(expression=None)  # type: ignore[arg-type]

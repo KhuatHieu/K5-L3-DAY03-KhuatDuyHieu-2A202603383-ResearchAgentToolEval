@@ -142,3 +142,21 @@ tools:
         sort: {type: string, enum: [relevance, date], default: "relevance", description: "Cách sắp xếp: 'relevance' cho bài nổi bật/liên quan nhất, 'date' cho bài mới đăng gần đây nhất."}
         limit: {type: integer, default: 5, description: "Số lượng story tối đa cần lấy (mặc định 5)."}
       required: [query]
+
+  - name: calculator
+    description: "Tính toán an toàn các biểu thức toán học và số học (+, -, *, /, **, %, ngoặc). Dùng khi người dùng yêu cầu tính toán con số cụ thể hoặc biểu thức toán học. Không dùng để tìm kiếm thông tin hay xử lý văn bản."
+    parameters:
+      type: object
+      properties:
+        expression: {type: string, description: "Biểu thức số học cần tính (ví dụ: '(2+3)*4', '10/4 + 2**3')."}
+      required: [expression]
+
+  - name: github_repos
+    description: "Tìm kiếm các kho mã nguồn (repositories) trên GitHub theo từ khóa. Dùng khi cần tìm kiếm dự án mã nguồn mở, repo GitHub, thư viện code. Không dùng để tìm kiếm bài báo khoa học hay tin tức thông thường."
+    parameters:
+      type: object
+      properties:
+        query: {type: string, description: "Từ khóa tìm kiếm repository (ví dụ: 'fastapi', 'research agent')."}
+        sort: {type: string, enum: [stars, updated], default: "stars", description: "Tiêu chí sắp xếp kết quả (stars hoặc updated)."}
+        limit: {type: integer, default: 5, description: "Số lượng repository tối đa cần lấy (mặc định 5)."}
+      required: [query]
