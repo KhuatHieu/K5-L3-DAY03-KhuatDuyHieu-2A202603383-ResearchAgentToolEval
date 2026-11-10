@@ -18,13 +18,15 @@
 
 **Research agent tiếng Việt:** tìm tin tức trên web, theo dõi tweet của một tài khoản hoặc cả cộng đồng Twitter/X, đọc và tóm tắt bài viết từ URL, tra paper arXiv, Wikipedia, Hacker News và GitHub, tính toán số, rồi tổng hợp thành bản tin markdown. Agent **hỏi lại khi thiếu thông tin** (không đoán account hay URL), **xin xác nhận trước khi gửi** Telegram, và từ chối việc ngoài phạm vi research (giải toán, viết code, đặt vé…).
 
-Kết quả eval hiện tại (`v2b`): base **0.80**, routing 0.95; group (10 case nhóm tự viết) **0.80**. Baseline `v0` là 0.65.
+Kết quả eval hiện tại (`v3`): base **0.95** (routing 1.00); group (10 case nhóm tự viết) **0.90**; research extension **1.00**. Baseline `v0` là 0.65.
 
 **Link dùng thử (deploy):**
 
 > UI Streamlit (`streamlit run app.py`) public qua Cloudflare Tunnel.
 >
-> URL: https://postcards-regard-ethical-pitch.trycloudflare.com/
+> URL: https://manitoba-investments-reliance-casey.trycloudflare.com/
+>
+> Lưu ý: tunnel chạy từ laptop thành viên nên link có thể đã ngừng khi máy tắt. Chạy lại local: `cd starter_v0 && streamlit run app.py`.
 
 ## A2. Tool agent có
 
@@ -119,17 +121,17 @@ Use `transcripts/*.transcript.json`.
 | 7 | tiểu sử Donald Trump | `wikipedia(topic="Donald Trump", lang="vi")` | v3 · A · turn 7 | Pass: route đúng tool mới `wikipedia` |
 | 8 | bạn đang dùng bao nhiêu tool? có được phép tool chaining không? | `policy(query="tool chaining ...", policy_area="tool_usage", top_k=3)` | v3 · A · turn 8 | Pass: trả lời dựa trên policy, nói rõ chính sách không nêu giới hạn |
 | 9 | tiểu sử donald trump | `wikipedia(topic="Donald Trump", lang="vi")` | v3 · B · turn 1 | Pass: route đúng `wikipedia`, có nguồn |
-| 10 | Tính toán biểu thức toán học: (150 * 4) + 250 / 5 | `calculator(expression="(150 * 4) + 250 / 5")` → `NotImplementedError` | v2b · C · turn 2 | Routing đúng nhưng tool chưa implement; model tự tính ra 650 (đúng) mà không báo tool lỗi |
-| 11 | 5 nhân 6 bằng | `calculator(expression="5*6")` → `NotImplementedError` | v2b · D · turn 1 | Giống turn 10: routing đúng, tool chưa implement, model tự trả lời 30 |
+| 10 | Tính toán biểu thức toán học: (150 * 4) + 250 / 5 | `calculator(expression="(150 * 4) + 250 / 5")` → `NotImplementedError` | v2b · C · turn 2 | Ở v2b: routing đúng nhưng tool chưa implement; model tự tính ra 650 mà không báo tool lỗi. **Đã fix ở v3:** calculator đã implement, `calculator(expression="(150 * 4) + 250 / 5")` trả `value: 650.0`, có 3 unit test (`tests/test_tool_calculator.py`) |
+| 11 | 5 nhân 6 bằng | `calculator(expression="5*6")` → `NotImplementedError` | v2b · D · turn 1 | Giống turn 10 (lỗi ở v2b, đã fix ở v3) |
 
 ## B5. Bonus Evidence
 
 | Bonus | Evidence File | What Worked | Risk / Guardrail |
 |---|---|---|---|
-| send (Telegram) |  |  |  |
+| send (Telegram) | `tools.yaml` (`send`, `confirmed`); eval case `GM02_confirm_before_send_after_research` trong `runs/v3_B_group_openai_20261110T123429471606.json` | Ở v3 agent gọi `clarify(response_type="yes_no")` để xin xác nhận trước khi `send` (GM02 fail ở v2b, pass ở v3); case base R12 kiểm tra không gửi khi chưa xác nhận. | Chưa có transcript live gửi Telegram thật; bằng chứng chỉ đến từ eval. `send` chỉ chạy khi `confirmed=true`. |
 | arXiv / company policy | `../transcripts/v3_openrouter_ui_20261110T112629096222.transcript.json`; `tools.yaml` | `policy` tra cứu được quy tắc nội bộ về cách chọn tool. Công cụ arXiv đã được cấu hình nhưng chưa có lượt gọi trong transcript. | Không xem nội dung policy tĩnh là tin mới; cần chạy một truy vấn arXiv để xác nhận công cụ hoạt động end-to-end. |
 | UI | `../app.py`; `../transcripts/v3_openrouter_ui_20261110T112629096222.transcript.json` | Streamlit cho chọn phiên bản, chat qua tool loop, xem trạng thái hỏi lại và tải transcript; transcript xác nhận chat UI đã chạy với tool. | Tunnel công khai có thể đổi/ngừng khi restart; cần API key/quota hợp lệ. `send` yêu cầu xác nhận trước khi gửi. |
-| Tool unit tests (`tests/`) | `pytest` output |  |  |
+| Tool unit tests (`tests/`) | `pytest` output (`tests/test_tool_*.py`, `tests/test_tools_todo.py`) | **112 passed, 0 failed, 0 skipped**. Mỗi tool mới (wikipedia, hackernews, github_repos, calculator) có ≥ 3 test, chạy offline bằng `fake_http`. | Test mock HTTP nên không phát hiện được việc API thật đổi format; cần eval/transcript live để bù. |
 
 ## B6. Reflection
 
@@ -140,26 +142,4 @@ Use `transcripts/*.transcript.json`.
 
 ## B7. Small Local Model Challenge (bonus)
 
-Only fill if your team did the local model challenge.
-
-| Version | Model (provider) | Prompt/Tools | case_accuracy | tool_routing | argument | multiturn | Run File |
-|---|---|---|---|---|---|---|---|
-| v3 | (cloud) | v3 |  |  |  |  |  |
-| v3-... | (ollama) | v3 |  |  |  |  |  |
-| v3-... | (ollama) | v3 |  |  |  |  |  |
-| v4-local |  |  |  |  |  |  |  |
-| v5-local |  |  |  |  |  |  |  |
-
-Lỗi đặc thù của model nhỏ (đếm từ run JSON):
-
-| Failure Pattern | Count | Example Case | Fix Tried | Helped? |
-|---|---|---|---|---|
-| wrong / hallucinated tool |  |  |  |  |
-| invalid JSON args (`_invalid_json_arguments`) |  |  |  |  |
-| no tool call / answered directly |  |  |  |  |
-| missed `clarify` |  |  |  |  |
-| repeated / unnecessary calls |  |  |  |  |
-
-- Cái gì giúp model nhỏ gọi tool đúng hơn nhất? Bằng chứng?
-- Bản prompt tối ưu cho local chạy trên model cloud thì sao?
-- Khi nào nhóm sẽ chọn model local thay vì cloud cho agent này?
+Nhóm không làm bonus này.
