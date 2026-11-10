@@ -2,6 +2,249 @@
   "dataset_id": "day04_v2_research_group",
   "dataset_role": "group",
   "description": "Case do NHÓM tự viết thêm để cover thêm trường hợp. Mỗi case cần: id, phase='B', query HOẶC turns, failure_type (thuộc allowed_failure_types), và expect (tool_calls[...] hoặc no_tool=true). Nên kèm metadata.what_it_tests.",
-  "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
-  "cases": []
+  "allowed_failure_types": [
+    "wrong_tool",
+    "wrong_arg_value",
+    "wrong_boundary",
+    "unnecessary_tool",
+    "out_of_scope",
+    "missing_info"
+  ],
+  "cases": [
+    {
+      "id": "G01_wikipedia_background",
+      "phase": "B",
+      "suite": "group",
+      "query": "Alan Turing là ai? Tóm tắt tiểu sử ngắn gọn giúp mình.",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "wikipedia"
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "new_tool_routing_wikipedia",
+        "what_it_tests": "Câu hỏi kiến thức nền 'X là ai' → route tới tool mới wikipedia, không dùng lookup (web/news)."
+      }
+    },
+    {
+      "id": "G02_hackernews_latest_sort",
+      "phase": "B",
+      "suite": "group",
+      "query": "Mấy bài mới đăng gần đây nhất trên Hacker News về Rust có gì?",
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "hackernews",
+            "args": {
+              "sort": "date"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "new_tool_routing_hackernews_args",
+        "what_it_tests": "Hỏi bài MỚI ĐĂNG trên Hacker News → tool mới hackernews với sort=date (không phải relevance), không dùng social_search."
+      }
+    },
+    {
+      "id": "G03_github_top_stars_limit",
+      "phase": "B",
+      "suite": "group",
+      "query": "Tìm giúp mình 3 repo GitHub nhiều sao nhất về vector database.",
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "github_repos",
+            "args": {
+              "sort": "stars",
+              "limit": 3
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "new_tool_routing_github_args",
+        "what_it_tests": "Tìm repo nhiều sao nhất, số lượng 3 → github_repos sort=stars, limit=3."
+      }
+    },
+    {
+      "id": "G04_calculator_arithmetic",
+      "phase": "B",
+      "suite": "group",
+      "query": "Tính giúp mình: (1250 * 12) * 0.15 bằng bao nhiêu?",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "calculator"
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "new_tool_routing_calculator",
+        "what_it_tests": "Phép tính số học cụ thể → tool mới calculator (tính chính xác), không tự nhẩm và không lookup."
+      }
+    },
+    {
+      "id": "G05_out_of_scope_booking",
+      "phase": "B",
+      "suite": "group",
+      "query": "Đặt giúp mình vé máy bay Hà Nội đi Đà Nẵng tối mai nhé.",
+      "failure_type": "out_of_scope",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "metadata": {
+        "skill": "out_of_scope",
+        "what_it_tests": "Yêu cầu hành động ngoài phạm vi research (đặt vé) → không gọi tool nào, từ chối/định hướng."
+      }
+    },
+    {
+      "id": "GM01_clarify_then_url",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Đọc và tóm tắt bài viết này giúp mình"
+        },
+        {
+          "role": "user",
+          "content": "Link đây: https://openai.com/index/introducing-gpt-4o/"
+        }
+      ],
+      "failure_type": "missing_info",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "fetch",
+            "args": {
+              "url": "https://openai.com/index/introducing-gpt-4o/"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_clarify_fill_url",
+        "what_it_tests": "Lượt 1 thiếu URL (đã hỏi lại) → lượt 2 user đưa link → gọi fetch đúng URL, không bịa URL."
+      }
+    },
+    {
+      "id": "GM02_confirm_before_send_after_research",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tìm tin AI hôm nay giúp mình"
+        },
+        {
+          "role": "user",
+          "content": "Ok, gửi bản tin đó lên Telegram nhé"
+        }
+      ],
+      "failure_type": "wrong_boundary",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "yes_no"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_confirm_before_write",
+        "what_it_tests": "Sau khi research xong, user bảo gửi Telegram → phải hỏi xác nhận yes_no, không gọi send ngay."
+      }
+    },
+    {
+      "id": "GM03_switch_to_hackernews",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Mọi người trên Twitter nói gì về Claude Code?"
+        },
+        {
+          "role": "user",
+          "content": "Không, mình muốn xem thảo luận trên Hacker News cơ"
+        }
+      ],
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "hackernews"
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_switch_to_new_tool",
+        "what_it_tests": "User đổi nguồn từ Twitter sang Hacker News → chuyển sang tool mới hackernews, không gọi lại social_search."
+      }
+    },
+    {
+      "id": "GM04_correction_timeframe",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tin tức về OpenAI tuần này có gì?"
+        },
+        {
+          "role": "user",
+          "content": "À đổi sang trong tháng này đi"
+        }
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news",
+              "timeframe": "month"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_correction_timeframe",
+        "what_it_tests": "User sửa khoảng thời gian từ tuần sang tháng → lookup topic=news, timeframe=month (cập nhật theo lượt mới nhất)."
+      }
+    },
+    {
+      "id": "GM05_thanks_no_tool",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tìm repo GitHub về LangGraph giúp mình"
+        },
+        {
+          "role": "user",
+          "content": "Cảm ơn, vậy là đủ rồi!"
+        }
+      ],
+      "failure_type": "unnecessary_tool",
+      "expect": {
+        "no_tool": true
+      },
+      "metadata": {
+        "skill": "multiturn_no_unnecessary_tool",
+        "what_it_tests": "Lượt cuối chỉ là cảm ơn/kết thúc → không gọi lại tool của lượt trước."
+      }
+    }
+  ]
 }
