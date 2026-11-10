@@ -17,6 +17,11 @@ from .policy.tool import search_company_policy
 from .social_search.tool import search_tweets
 from .send.tool import send_telegram
 from .lookup.tool import web_search
+# New team tools (registered here; add to artifacts/tools.yaml only when implemented + tested)
+from .wikipedia.tool import wikipedia_summary      # owner: thdanhnguyen
+from .hackernews.tool import hn_search             # owner: thdanhnguyen
+from .github_repos.tool import search_github_repos  # owner: HViettt
+from .calculator.tool import calculate             # owner: HViettt
 
 
 # NOTE (starter_v0): tool names here are intentionally vague. These keys are the
@@ -35,8 +40,11 @@ TOOL_FUNCTIONS = {
     "policy": search_company_policy,
     "papers": arxiv_search,
     "paper_text": get_arxiv_paper_text,
-    # TODO(student): register your new tool here, e.g. "my_tool": my_tool_function,
-    # then declare it in artifacts/tools.yaml and run `pytest tests/test_tool_contract.py`.
+    # New team tools — mỗi người chỉ sửa dòng của mình.
+    "wikipedia": wikipedia_summary,
+    "hackernews": hn_search,
+    "github_repos": search_github_repos,
+    "calculator": calculate,
 }
 
 
