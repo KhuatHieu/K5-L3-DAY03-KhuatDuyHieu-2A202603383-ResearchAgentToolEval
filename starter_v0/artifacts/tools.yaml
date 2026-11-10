@@ -123,3 +123,22 @@ tools:
         max_pages: {type: integer, default: 5, description: "Số trang"}
         max_chars: {type: integer, default: 8000, description: "Số ký tự"}
       required: [arxiv_url]
+
+  - name: wikipedia
+    description: "Lấy tóm tắt bách khoa (định nghĩa, khái niệm nền tảng, tiểu sử người nổi tiếng, lịch sử tổ chức) từ Wikipedia. Dùng khi user hỏi 'X là gì', 'X là ai', hoặc cần định nghĩa/kiến thức nền chuẩn xác về một khái niệm, nhân vật, sự kiện lịch sử. KHÔNG dùng cho tin tức thời sự mới nhất hôm nay/tuần này (dùng lookup), bài đăng Twitter/X (dùng timeline/social_search), hoặc bài báo khoa học chuyên sâu trên arXiv (dùng papers)."
+    parameters:
+      type: object
+      properties:
+        topic: {type: string, description: "Tên khái niệm, thực thể, nhân vật hoặc tổ chức cần tra cứu trên Wikipedia (ví dụ: 'Transformer (deep learning architecture)', 'Alan Turing')."}
+        lang: {type: string, enum: [en, vi], default: "en", description: "Ngôn ngữ Wikipedia cần tra cứu ('en' cho tiếng Anh, 'vi' cho tiếng Việt)."}
+      required: [topic]
+
+  - name: hackernews
+    description: "Tìm các bài đăng (stories) và thảo luận của cộng đồng lập trình viên/kỹ sư/startup trên Hacker News (Y Combinator) theo từ khóa. Dùng khi user hỏi về thảo luận trên Hacker News (HN), góc nhìn cộng đồng dev/engineer về một công nghệ, ngôn ngữ lập trình, công cụ AI, hoặc tin tức nổi bật trên HN. KHÔNG dùng cho bài đăng Twitter/X (dùng social_search/timeline), tin tức báo chí phổ thông (dùng lookup), hoặc tìm mã nguồn/repository trên GitHub (dùng github_repos)."
+    parameters:
+      type: object
+      properties:
+        query: {type: string, description: "Từ khóa tìm kiếm trên Hacker News (ví dụ: 'Claude Code', 'Rust vs Go', 'SQLite')."}
+        sort: {type: string, enum: [relevance, date], default: "relevance", description: "Cách sắp xếp: 'relevance' cho bài nổi bật/liên quan nhất, 'date' cho bài mới đăng gần đây nhất."}
+        limit: {type: integer, default: 5, description: "Số lượng story tối đa cần lấy (mặc định 5)."}
+      required: [query]
