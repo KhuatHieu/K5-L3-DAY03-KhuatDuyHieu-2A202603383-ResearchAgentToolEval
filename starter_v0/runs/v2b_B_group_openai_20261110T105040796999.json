@@ -1,0 +1,774 @@
+{
+  "run_id": "v2b_B_group_openai_20261110T105040796999",
+  "version": "v2b",
+  "artifact_version": "v2b+p1c3185777e69+ta2ba0d624c26",
+  "prompt_hash": "1c3185777e690e865f183ed8c5baa1227a85eb00db26ea5c324b71698c7ef39f",
+  "tools_hash": "a2ba0d624c2617717a98e9d5d7b0dcdc74341d4f2ee183bb3b0b24cab2cffa68",
+  "phase": "B",
+  "suite": "group",
+  "provider": "openai",
+  "model": "gpt-6-luna",
+  "system_prompt": "/home/khuathieu/vinai20k/K5-L3-DAY03-KhuatDuyHieu-2A202603383-ResearchAgentToolEval/starter_v0/artifacts/system_prompt.md",
+  "tools": "/home/khuathieu/vinai20k/K5-L3-DAY03-KhuatDuyHieu-2A202603383-ResearchAgentToolEval/starter_v0/artifacts/tools.yaml",
+  "eval_cases": "data/eval_group.json",
+  "dataset_id": "day04_v2_research_group",
+  "dataset_role": "group",
+  "description": "Case do NHÓM tự viết thêm để cover thêm trường hợp. Mỗi case cần: id, phase='B', query HOẶC turns, failure_type (thuộc allowed_failure_types), và expect (tool_calls[...] hoặc no_tool=true). Nên kèm metadata.what_it_tests.",
+  "generated_at": "2026-11-10T10:50:40",
+  "summary": {
+    "total_cases": 10,
+    "measured_cases": 10,
+    "provider_error_cases": 0,
+    "passed_cases": 8,
+    "case_accuracy": 0.8,
+    "tool_routing_accuracy": 0.9,
+    "argument_accuracy": 0.8,
+    "multiturn_accuracy": 0.8,
+    "failure_counts": {
+      "out_of_scope": 1,
+      "wrong_boundary": 1
+    },
+    "observed_mismatch_counts": {
+      "unexpected_tool_call": 1,
+      "wrong_arg_value": 1
+    }
+  },
+  "results": [
+    {
+      "id": "G01_wikipedia_background",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "new_tool_routing_wikipedia",
+        "what_it_tests": "Câu hỏi kiến thức nền 'X là ai' → route tới tool mới wikipedia, không dùng lookup (web/news)."
+      },
+      "input": "Alan Turing là ai? Tóm tắt tiểu sử ngắn gọn giúp mình.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "wikipedia"
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "wikipedia",
+            "args": {
+              "topic": "Alan Turing",
+              "lang": "vi"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "wikipedia",
+          "args": {
+            "topic": "Alan Turing",
+            "lang": "vi"
+          },
+          "result": {
+            "tool": "wikipedia_summary",
+            "topic": "Alan Turing",
+            "lang": "vi",
+            "title": "Alan Turing",
+            "summary": "Alan Mathison Turing OBE FRS là một nhà toán học, logic học và mật mã học người Anh, được xem là một trong những nhà tiên phong của ngành khoa học máy tính và A.I. Phép thử Turing là một trong những cống hiến lớn nhất của ông trong ngành trí tuệ nhân tạo: thử thách này đặt ra câu hỏi rằng máy móc có khi nào đạt được ý thức và có thể suy nghĩ được hay không. Ông đã hình thức hóa khái niệm thuật toán và tính toán với máy Turing, đồng thời đưa ra phiên bản của \"Turing\", mà ngày nay được đông đảo công chúng chấp nhận, về luận đề Church-Turing, một luận đề nói rằng tất cả những gì tính được bằng thuật toán đều có thể tính được bằng máy Turing.",
+            "url": "https://vi.wikipedia.org/wiki/Alan_Turing",
+            "items": [
+              {
+                "title": "Alan Turing",
+                "url": "https://vi.wikipedia.org/wiki/Alan_Turing",
+                "source": "vi.wikipedia.org",
+                "summary": "Alan Mathison Turing OBE FRS là một nhà toán học, logic học và mật mã học người Anh, được xem là một trong những nhà tiên phong của ngành khoa học máy tính và A.I. Phép thử Turing là một trong những cống hiến lớn nhất của ông trong ngành trí tuệ nhân tạo: thử thách này đặt ra câu hỏi rằng máy móc có khi nào đạt được ý thức và có thể suy nghĩ được hay không. Ông đã hình thức hóa khái niệm thuật toán và tính toán với máy Turing, đồng thời đưa ra phiên bản của \"Turing\", mà ngày nay được đông đảo công chúng chấp nhận, về luận đề Church-Turing, một luận đề nói rằng tất cả những gì tính được bằng thuật toán đều có thể tính được bằng máy Turing."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G02_hackernews_latest_sort",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "new_tool_routing_hackernews_args",
+        "what_it_tests": "Hỏi bài MỚI ĐĂNG trên Hacker News → tool mới hackernews với sort=date (không phải relevance), không dùng social_search."
+      },
+      "input": "Mấy bài mới đăng gần đây nhất trên Hacker News về Rust có gì?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "hackernews",
+            "args": {
+              "sort": "date"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "hackernews",
+            "args": {
+              "query": "Rust",
+              "sort": "date",
+              "limit": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "hackernews",
+          "args": {
+            "query": "Rust",
+            "sort": "date",
+            "limit": 5
+          },
+          "result": {
+            "tool": "hn_search",
+            "query": "Rust",
+            "sort": "date",
+            "limit": 5,
+            "items": [
+              {
+                "title": "Australia to introduce mandatory incident reporting after OpenAI hack",
+                "url": "https://www.theguardian.com/technology/2026/nov/10/australia-manadatory-reporting-openai-medicare-hack",
+                "points": 2,
+                "num_comments": 1,
+                "created_at": "2026-11-10T03:31:12Z",
+                "hn_url": "https://news.ycombinator.com/item?id=50435725"
+              },
+              {
+                "title": "QNet: Post-quantum Layer-1 in Rust using native ML-DSA-65 signatures",
+                "url": "https://github.com/AIQnetLab/QNet-Blockchain",
+                "points": 1,
+                "num_comments": 0,
+                "created_at": "2026-11-10T03:14:57Z",
+                "hn_url": "https://news.ycombinator.com/item?id=50435629"
+              },
+              {
+                "title": "Show HN: Kinsona – a hotel booking site that shows its cut on every booking",
+                "url": "https://kinsona.com/",
+                "points": 1,
+                "num_comments": 2,
+                "created_at": "2026-11-10T03:13:42Z",
+                "hn_url": "https://news.ycombinator.com/item?id=50435628"
+              },
+              {
+                "title": "Serc: CPython bytecode compiler written in Rust (2-4x speedup, Codex built)",
+                "url": "https://github.com/astral-experiments/serc",
+                "points": 2,
+                "num_comments": 1,
+                "created_at": "2026-11-10T02:53:14Z",
+                "hn_url": "https://news.ycombinator.com/item?id=50435502"
+              },
+              {
+                "title": "OpenAI models have no agency anymore",
+                "url": "https://news.ycombinator.com/item?id=50435490",
+                "points": 3,
+                "num_comments": 0,
+                "created_at": "2026-11-10T02:51:25Z",
+                "hn_url": "https://news.ycombinator.com/item?id=50435490"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G03_github_top_stars_limit",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "new_tool_routing_github_args",
+        "what_it_tests": "Tìm repo nhiều sao nhất, số lượng 3 → github_repos sort=stars, limit=3."
+      },
+      "input": "Tìm giúp mình 3 repo GitHub nhiều sao nhất về vector database.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "github_repos",
+            "args": {
+              "sort": "stars",
+              "limit": 3
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "github_repos",
+            "args": {
+              "query": "vector database",
+              "sort": "stars",
+              "limit": 3
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "github_repos",
+          "args": {
+            "query": "vector database",
+            "sort": "stars",
+            "limit": 3
+          },
+          "result": {
+            "tool": "search_github_repos",
+            "query": "vector database",
+            "sort": "stars",
+            "items": [
+              {
+                "name": "redis/redis",
+                "url": "https://github.com/redis/redis",
+                "description": "For developers, who are building real-time data-driven applications, Redis is the preferred, fastest, and most feature-rich cache, data structure server, and document and vector query engine.",
+                "stars": 77331,
+                "language": "C",
+                "updated_at": "2026-11-10T03:35:43Z"
+              },
+              {
+                "name": "pathwaycom/serviette",
+                "url": "https://github.com/pathwaycom/serviette",
+                "description": "A no-code RAG server that keeps answers in sync with your documents. Works with 8 vector databases. Built on Pathway.",
+                "stars": 58721,
+                "language": "Python",
+                "updated_at": "2026-11-10T02:27:33Z"
+              },
+              {
+                "name": "milvus-io/milvus",
+                "url": "https://github.com/milvus-io/milvus",
+                "description": "Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search",
+                "stars": 46621,
+                "language": "Go",
+                "updated_at": "2026-11-10T03:44:05Z"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G04_calculator_arithmetic",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "new_tool_routing_calculator",
+        "what_it_tests": "Phép tính số học cụ thể → tool mới calculator (tính chính xác), không tự nhẩm và không lookup."
+      },
+      "input": "Tính giúp mình: (1250 * 12) * 0.15 bằng bao nhiêu?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "calculator"
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "calculator",
+            "args": {
+              "expression": "(1250*12)*0.15"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "calculator",
+          "args": {
+            "expression": "(1250*12)*0.15"
+          },
+          "result": {
+            "tool": "calculate",
+            "expression": "(1250*12)*0.15",
+            "value": 2250.0
+          }
+        }
+      ]
+    },
+    {
+      "id": "G05_out_of_scope_booking",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "out_of_scope",
+        "what_it_tests": "Yêu cầu hành động ngoài phạm vi research (đặt vé) → không gọi tool nào, từ chối/định hướng."
+      },
+      "input": "Đặt giúp mình vé máy bay Hà Nội đi Đà Nẵng tối mai nhé.",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": false,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "question": "Bạn muốn bay tối mai (11/11/2026) từ sân bay Nội Bài đến Đà Nẵng cho bao nhiêu hành khách, và bạn muốn mình tìm chuyến phù hợp trước hay đã có hãng/giờ bay cụ thể?",
+              "response_type": "text"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "out_of_scope",
+        "observed_mismatch": "unexpected_tool_call",
+        "failure_type": "out_of_scope",
+        "failures": [
+          "expected no tool call"
+        ]
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn muốn bay tối mai (11/11/2026) từ sân bay Nội Bài đến Đà Nẵng cho bao nhiêu hành khách, và bạn muốn mình tìm chuyến phù hợp trước hay đã có hãng/giờ bay cụ thể?",
+            "response_type": "text"
+          },
+          "result": {
+            "tool": "ask_user",
+            "question": "Bạn muốn bay tối mai (11/11/2026) từ sân bay Nội Bài đến Đà Nẵng cho bao nhiêu hành khách, và bạn muốn mình tìm chuyến phù hợp trước hay đã có hãng/giờ bay cụ thể?",
+            "response_type": "text",
+            "options": [],
+            "awaiting_user": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "GM01_clarify_then_url",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_clarify_fill_url",
+        "what_it_tests": "Lượt 1 thiếu URL (đã hỏi lại) → lượt 2 user đưa link → gọi fetch đúng URL, không bịa URL."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Đọc và tóm tắt bài viết này giúp mình"
+        },
+        {
+          "role": "user",
+          "content": "Link đây: https://openai.com/index/introducing-gpt-4o/"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "fetch",
+            "args": {
+              "url": "https://openai.com/index/introducing-gpt-4o/"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "fetch",
+            "args": {
+              "url": "https://openai.com/index/introducing-gpt-4o/"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "missing_info",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "fetch",
+          "args": {
+            "url": "https://openai.com/index/introducing-gpt-4o/"
+          },
+          "result": {
+            "tool": "read_url",
+            "url": "https://openai.com/index/introducing-gpt-4o/",
+            "items": [
+              {
+                "title": "OpenAI",
+                "url": "https://openai.com/index/introducing-gpt-4o/",
+                "source": "openai.com",
+                "summary": "OpenAI\n\n# 404\n\nA gap in the notes\n\nThe rest is part of the score\n\nListen, then begin\n\nby [gpt-6-astra(opens in a new window)](https://chatgpt.com/?surface=work&model=gpt-6-astra-wm&openaicom-did=b8dd190b-d32a-466f-8af5-73a43be97abe&openaicom_referred=true)"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "GM02_confirm_before_send_after_research",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_confirm_before_write",
+        "what_it_tests": "Sau khi research xong, user bảo gửi Telegram → phải hỏi xác nhận yes_no, không gọi send ngay."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tìm tin AI hôm nay giúp mình"
+        },
+        {
+          "role": "user",
+          "content": "Ok, gửi bản tin đó lên Telegram nhé"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "yes_no"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": true,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "question": "Bạn muốn gửi bản tin AI nào lên Telegram? Vui lòng dán nội dung bản tin hoặc cho biết bản tin cụ thể.",
+              "response_type": "text"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_boundary",
+        "observed_mismatch": "wrong_arg_value",
+        "failure_type": "wrong_boundary",
+        "failures": [
+          "response_type: expected 'yes_no', got 'text'"
+        ]
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Bạn muốn gửi bản tin AI nào lên Telegram? Vui lòng dán nội dung bản tin hoặc cho biết bản tin cụ thể.",
+            "response_type": "text"
+          },
+          "result": {
+            "tool": "ask_user",
+            "question": "Bạn muốn gửi bản tin AI nào lên Telegram? Vui lòng dán nội dung bản tin hoặc cho biết bản tin cụ thể.",
+            "response_type": "text",
+            "options": [],
+            "awaiting_user": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "GM03_switch_to_hackernews",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_switch_to_new_tool",
+        "what_it_tests": "User đổi nguồn từ Twitter sang Hacker News → chuyển sang tool mới hackernews, không gọi lại social_search."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Mọi người trên Twitter nói gì về Claude Code?"
+        },
+        {
+          "role": "user",
+          "content": "Không, mình muốn xem thảo luận trên Hacker News cơ"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "hackernews"
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "hackernews",
+            "args": {
+              "query": "Claude Code",
+              "sort": "relevance",
+              "limit": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "hackernews",
+          "args": {
+            "query": "Claude Code",
+            "sort": "relevance",
+            "limit": 5
+          },
+          "result": {
+            "tool": "hn_search",
+            "query": "Claude Code",
+            "sort": "relevance",
+            "limit": 5,
+            "items": [
+              {
+                "title": "Claude Code is steganographically marking requests",
+                "url": "https://thereallo.dev/blog/claude-code-prompt-steganography",
+                "points": 2445,
+                "num_comments": 750,
+                "created_at": "2026-06-30T15:44:24Z",
+                "hn_url": "https://news.ycombinator.com/item?id=48734373"
+              },
+              {
+                "title": "Claude 3.7 Sonnet and Claude Code",
+                "url": "https://www.anthropic.com/news/claude-3-7-sonnet",
+                "points": 2127,
+                "num_comments": 963,
+                "created_at": "2025-02-24T18:28:59Z",
+                "hn_url": "https://news.ycombinator.com/item?id=43163011"
+              },
+              {
+                "title": "Claude Code's source code has been leaked via a map file in their NPM registry",
+                "url": "https://twitter.com/Fried_rice/status/2038894956459290963",
+                "points": 2095,
+                "num_comments": 1022,
+                "created_at": "2026-03-31T09:00:40Z",
+                "hn_url": "https://news.ycombinator.com/item?id=47584540"
+              },
+              {
+                "title": "Claude Code sends your email address to websites",
+                "url": "https://github.com/anthropics/claude-code/issues/107757",
+                "points": 1612,
+                "num_comments": 535,
+                "created_at": "2026-11-05T22:17:15Z",
+                "hn_url": "https://news.ycombinator.com/item?id=50385272"
+              },
+              {
+                "title": "The Claude Code Source Leak: fake tools, frustration regexes, undercover mode",
+                "url": "https://alex000kim.com/posts/2026-03-31-claude-code-source-leak/",
+                "points": 1376,
+                "num_comments": 578,
+                "created_at": "2026-03-31T13:04:30Z",
+                "hn_url": "https://news.ycombinator.com/item?id=47586778"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "GM04_correction_timeframe",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_correction_timeframe",
+        "what_it_tests": "User sửa khoảng thời gian từ tuần sang tháng → lookup topic=news, timeframe=month (cập nhật theo lượt mới nhất)."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tin tức về OpenAI tuần này có gì?"
+        },
+        {
+          "role": "user",
+          "content": "À đổi sang trong tháng này đi"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news",
+              "timeframe": "month"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "OpenAI news November 2026",
+              "topic": "news",
+              "timeframe": "month",
+              "max_results": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "OpenAI news November 2026",
+            "topic": "news",
+            "timeframe": "month",
+            "max_results": 5
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "OpenAI news November 2026",
+            "topic": "news",
+            "timeframe": "month",
+            "items": [
+              {
+                "title": "Setting a new standard for responsible AI infrastructure | OpenAI",
+                "url": "https://openai.com/index/setting-new-standard-responsible-ai-infrastructure",
+                "source": "openai.com",
+                "summary": "## Author\n\nOpenAI\n\n## Keep reading\n\nView all\n\nImage 1: Introducing the Grid Protectors Program — Cover\n\nIntroducing the Grid Protectors Program Global Affairs Nov 2, 2026\n\nImage 2: OpenAI appoints Dan Driscoll as Senior Counselor for National Security Modernization — Cover\n\nDan Driscoll joins OpenAI Company Nov 2, 2026\n\nImage 3: OpenAI and Poland’s NASK announce partnership — cover\n\nOpenAI and NASK partner on AI safety and security Global Affairs Oct 23, 2026 [...] Skip to main content\n\n\n\nLog inTry ChatGPT(opens in a new window)\n\n   Research\n   Products\n   Business\n   Developers\n   Company\n   Foundation(opens in a new window)\n\nTry ChatGPT(opens in a new window)Login\n\nOpenAI\n\nNovember 5, 2026\n\nGlobal Affairs\n\n# Setting a new standard for responsible AI infrastructure\n\nNew commitments to the communities where we build and policy proposals to help more Americans share in the benefits.\n\nLoading…\n\nAudio 1\n\nShare [...] ## Building from the community up\n\nThe investments that help America compete globally can also help communities prosper locally. That starts with giving residents a say while plans can still change and a way to hold developers accountable for delivering on their commitments. That’s what we’re committing to at the campuses we own and operate, and what we believe people should be able to count on wherever AI infrastructure is built across the country.\n\n   Global Affairs\n   2026\n\n## Author",
+                "score": 0.8936907
+              },
+              {
+                "title": "OpenAI to acquire Pierre Computer Company, Inc.",
+                "url": "https://openai.com/index/openai-to-acquire-pierre",
+                "source": "openai.com",
+                "summary": "Skip to main content\n\n\n\nLog inTry ChatGPT(opens in a new window)\n\n   Research\n   Products\n   Business\n   Developers\n   Company\n   Foundation(opens in a new window)\n\nOpenAI to acquire Pierre Computer Company, Inc. | OpenAI\n\nNovember 4, 2026\n\nCompany\n\n# OpenAI to acquire Pierre Computer Company, Inc.\n\nExpanding Codex’s tools for building, understanding, and reviewing code.\n\nShare\n\nCraftsmanship meets scale for the agentic era [...] ## Keep reading\n\nView all\n\nImage 1: Scaling Git at OpenAI — art card\n\nScaling Git at OpenAI Engineering Nov 2, 2026\n\nImage 2: Codex maxxing 1x1\n\nCodex-Maxxing for Long-Running Work AI Adoption Jun 22, 2026\n\nImage 3: OAIonOAI ChadNelson 1x1\n\nHow Codex became a collaborator for OpenAI’s creative team OpenAI on OpenAI Jul 16, 2026\n\nResearch\n   Research Index\n   Research Overview\n   Economic Research\n\nLatest Advancements\n   GPT-6.1 Sol\n   GPT-6 Astra\n   GPT-5.6\n   GPT-5.5 [...] Pierre’s open-source projects will remain open-source, and we’ll continue to contribute to them. Customers can continue using Code Storage after the acquisition closes while we work to bring its features and functionality into Codex.\n\n_The closing of the acquisition is subject to customary closing conditions, including receipt of regulatory approvals. Until closing, OpenAI and Pierre will remain separate and independent companies._\n\n   2026\n   Codex\n\n## Author\n\nOpenAI\n\n## Keep reading",
+                "score": 0.86632514
+              },
+              {
+                "title": "LifeVal",
+                "url": "https://openai.com/index/lifeval",
+                "source": "openai.com",
+                "summary": "Skip to main content\n\n\n\nLog inTry ChatGPT(opens in a new window)\n\n   Research\n   Products\n   Business\n   Developers\n   Company\n   Foundation(opens in a new window)\n\nLifeVal | OpenAI\n\nNovember 2, 2026\n\nResearchPublication\n\n# LifeVal L i f e V a l LImage 1iImage 2fImage 3eImage 4VImage 5aImage 6lImage 7\n\nMeasuring AI progress on the tasks that matter in everyday life.\n\nLifeVal video showing everyday tasks including shopping, caregiving, moving, and reading with a child.\n\nVideo 1\n\n00:00 01:05 [...] 2026\n\n## Author\n\nOpenAI\n\n## Keep reading\n\nView all\n\nImage 23: How we detect frontier model misalignment — Cover\n\nHow we detect frontier model misalignment Security Oct 29, 2026\n\nImage 24: Working with academic communities to build scientific understanding — Cover\n\nWorking with academic communities to build scientific understanding Research Oct 26, 2026\n\nImage 25: An in-depth look at how workers use ChatGPT — Cover\n\nChatGPT’s expanding world of work Research Oct 26, 2026",
+                "score": 0.8399576
+              },
+              {
+                "title": "Partnering with Hacktron to find vulnerabilities in OpenAI’s systems",
+                "url": "https://openai.com/index/partnering-with-hacktron",
+                "source": "openai.com",
+                "summary": "Preparing our next security sprint to harden OpenAI Security Nov 2, 2026\n\nImage 2: Rewarding defenders with bigger bug bounties — Cover\n\nRewarding defenders with bigger bug bounties Security Nov 2, 2026\n\nImage 3: GPT-Daybreak > Cover\n\nExpanding Daybreak as the Cyber Defense Window Narrows Security Aug 10, 2026\n\nResearch\n   Research Index\n   Research Overview\n   Economic Research\n\nLatest Advancements\n   GPT-6.1 Sol\n   GPT-6 Astra\n   GPT-5.6\n   GPT-5.5 [...] Skip to main content\n\n\n\nLog inTry ChatGPT(opens in a new window)\n\n   Research\n   Products\n   Business\n   Developers\n   Company\n   Foundation(opens in a new window)\n\nPartnering with Hacktron to find vulnerabilities in OpenAI’s systems | OpenAI\n\nNovember 6, 2026\n\nSecurity\n\n# Partnering with Hacktron to find vulnerabilities in OpenAI’s systems\n\nListen to article 1:39\n\nAudio 1\n\nShare [...] —Zayne Zhang, CEO, Hacktron\n\nWe’re grateful to Hacktron and other independent researchers who put time into finding and reporting weaknesses to help strengthen the security that protects all our users. To see which systems are in scope or submit a finding, visit our Security Bug Bounty program⁠(opens in a new window).\n\n   2026\n   Cybersecurity\n\n## Author\n\nOpenAI\n\n## Keep reading\n\nView all\n\nImage 1: Preparing our next security sprint to harden OpenAI — Cover",
+                "score": 0.83932644
+              },
+              {
+                "title": "GPT‑6 Cyber: Advancing the frontier of aligned cybersecurity agents",
+                "url": "https://openai.com/index/introducing-gpt-6-cyber",
+                "source": "openai.com",
+                "summary": "New users and organizations can apply for Daybreak⁠ and get started with our cyber skills, products, and partners⁠.\n\n   Codex\n   Cybersecurity\n\n## Author\n\nOpenAI\n\n## Keep reading\n\nView all\n\nImage 2: ChatGPT Enterprise now available in AWS Marketplace — Cover\n\nChatGPT Enterprise now available in AWS Marketplace Product Nov 9, 2026\n\nImage 3: Partnering with Hacktron to find vulnerabilities in OpenAI’s systems — Cover\n\nPartnering with Hacktron to strengthen OpenAI’s security Security Nov 6, 2026 [...] Skip to main content\n\n\n\nLog inTry ChatGPT(opens in a new window)\n\n   Research\n   Products\n   Business\n   Developers\n   Company\n   Foundation(opens in a new window)\n\nTry ChatGPT(opens in a new window)Login\n\nOpenAI\n\nImage 1\n\nNovember 5, 2026\n\nProductSecuritySafety\n\n# GPT‑6 Cyber: Advancing the frontier of aligned cybersecurity agents\n\nA cybersecurity model trained to find and validate exploitable vulnerabilities, while staying within the scope that researchers set. [...] (opens in a new window)(opens in a new window)(opens in a new window)(opens in a new window)(opens in a new window)(opens in a new window)(opens in a new window)\n\nOpenAI © 2015–2026 Your privacy choices\n\nEnglish United States",
+                "score": 0.8091708
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "GM05_thanks_no_tool",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_no_unnecessary_tool",
+        "what_it_tests": "Lượt cuối chỉ là cảm ơn/kết thúc → không gọi lại tool của lượt trước."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tìm repo GitHub về LangGraph giúp mình"
+        },
+        {
+          "role": "user",
+          "content": "Cảm ơn, vậy là đủ rồi!"
+        }
+      ],
+      "expect": {
+        "no_tool": true
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Không có gì!",
+        "case_failure_type": "unnecessary_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    }
+  ]
+}
